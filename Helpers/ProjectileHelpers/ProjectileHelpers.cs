@@ -165,5 +165,44 @@ namespace DestructibleTiles.Helpers.ProjectileHelpers {
 
 			return new Rectangle( x, y, width, height );
 		}
+
+
+		public static bool RespectsPlatforms( Projectile projectile, out bool onlySometimes ) {
+			if( Main.projPet[projectile.type] ) {
+				onlySometimes = true;
+				return true;
+			}
+			if( projectile.aiStyle == 53 ) {
+				onlySometimes = false;
+				return true;
+			}
+			switch( projectile.type ) {
+			case 9:
+			case 12:
+			case 15:
+			case 13:
+			case 24:
+			case 31:
+			case 39:
+			case 40:
+			case 663:
+			case 665:
+			case 667:
+			case 677:
+			case 678:
+			case 679:
+			case 688:
+			case 689:
+			case 690:
+			case 691:
+			case 692:
+			case 693:
+				onlySometimes = false;
+				return true;
+			}
+
+			onlySometimes = false;
+			return false;
+		}
 	}
 }

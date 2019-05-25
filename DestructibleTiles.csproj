@@ -43,6 +43,7 @@
     <Compile Include="MyMod.cs" />
     <Compile Include="MyMod_Meta.cs" />
     <Compile Include="MyPlayer.cs" />
+    <Compile Include="MyProjectile_TileHit.cs" />
     <Compile Include="MyProjectile_TileHp.cs" />
     <Compile Include="MyProjectile.cs" />
     <Compile Include="NetProtocols\ModSettingsProtocol.cs" />

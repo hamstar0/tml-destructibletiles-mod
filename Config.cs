@@ -1,6 +1,8 @@
 ﻿using HamstarHelpers.Components.Config;
 using System;
 using System.Collections.Generic;
+using Terraria.ID;
+
 
 namespace DestructibleTiles {
 	public class DestructibleTilesConfigData : ConfigurationDataBase {
@@ -17,12 +19,16 @@ namespace DestructibleTiles {
 		public bool UseVanillaTileDamageScalesUnlessOverridden = true;
 		public IDictionary<string, float> TileDamageScale = new Dictionary<string, float>();
 
+		public float AfterFirstTileHitDamageScale = 0.75f;
+
 
 
 		////////////////
 
 		public void SetDefaults() {
 			this.TileDamageScale.Clear();
+
+			this.TileDamageScale[ "Terraria."+TileID.MartianConduitPlating ] = 0.1f;
 		}
 
 
