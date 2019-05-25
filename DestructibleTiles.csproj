@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="API.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Helpers\ParticleFxHelpers\ParticleFxHelpers.cs" />
     <Compile Include="Helpers\ProjectileHelpers\ProjectileHelpers.cs" />
     <Compile Include="Helpers\TileHelpers\TileHelpers.cs" />
     <Compile Include="Helpers\TileHelpers\TileIdentityHelpers.cs" />
