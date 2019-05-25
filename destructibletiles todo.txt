@@ -1,8 +1,0 @@
-v1
--	Implement projectile vs platform (collide style) handling
--	Add dust effects (smokey-dust puff
-
--	Adjust damage by tile hp
--	Apply tile hits to tile damage stages
--	Setup projectile hit detection for tiles
--	Setup project (including configs)
