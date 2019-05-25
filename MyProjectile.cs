@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HamstarHelpers.Helpers.TileHelpers;
+using HamstarHelpers.Services.Timers;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -23,7 +24,7 @@ namespace DestructibleTiles {
 			int projBottom = posY + dim.Height;
 
 			bool onlySometimesRespects;
-			bool respectsPlatforms = Helpers.ProjectileHelpers.ProjectileHelpers.RespectsPlatforms( projectile, out onlySometimesRespects )
+			bool respectsPlatforms = Helpers.ProjectileHelpers.ProjectileHelpers.VanillaProjectileRespectsPlatforms( projectile, out onlySometimesRespects )
 				&& !onlySometimesRespects;
 
 			IDictionary<int, int> hits = new Dictionary<int, int>();
@@ -38,8 +39,16 @@ namespace DestructibleTiles {
 					}
 				}
 			}
-			
-			this.HitTiles( projectile, hits );
+
+			lock( DestructibleTilesProjectile.MyLock ) {
+				string timerName = "PTH_" + projectile.whoAmI;
+				bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
+				Timers.SetTimer( timerName, 2, () => false );
+
+				if( !isConsecutive ) {
+					this.HitTiles( projectile, hits );
+				}
+			}
 
 			return base.OnTileCollide( projectile, oldVelocity );
 		}

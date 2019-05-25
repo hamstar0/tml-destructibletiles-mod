@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HamstarHelpers.Helpers.TileHelpers;
+using HamstarHelpers.Services.Timers;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -38,8 +39,9 @@ namespace DestructibleTiles {
 		
 		public void HitTiles( Projectile projectile, IDictionary<int, int> hits ) {
 			var mymod = DestructibleTilesMod.Instance;
+			IOrderedEnumerable<KeyValuePair<int, int>> orderedHits;
 
-			var orderedHits = hits.OrderBy( ( kv ) => {
+			orderedHits = hits.OrderBy( ( kv ) => {
 				var pos = new Vector2( kv.Key, kv.Value );
 				return Vector2.DistanceSquared( pos, projectile.Center );
 			} );

@@ -91,9 +91,6 @@ namespace DestructibleTiles.Helpers.ProjectileHelpers {
 				height = 10;
 				break;
 			case 514:
-				width = 4;
-				height = 4;
-				break;
 			case 248:
 			case 247:
 			case 507:
@@ -101,9 +98,6 @@ namespace DestructibleTiles.Helpers.ProjectileHelpers {
 			case 662:
 			case 680:
 			case 685:
-				width = 4;
-				height = 4;
-				break;
 			case 254:
 				width = 4;
 				height = 4;
@@ -167,7 +161,7 @@ namespace DestructibleTiles.Helpers.ProjectileHelpers {
 		}
 
 
-		public static bool RespectsPlatforms( Projectile projectile, out bool onlySometimes ) {
+		public static bool VanillaProjectileRespectsPlatforms( Projectile projectile, out bool onlySometimes ) {
 			if( Main.projPet[projectile.type] ) {
 				onlySometimes = true;
 				return true;
