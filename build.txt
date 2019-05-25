@@ -1,0 +1,6 @@
+author = hamstar
+version = 0.1
+displayName = Destructible Tiles
+modReferences = HamstarHelpers@4.4.0
+buildIgnore = *.csproj, *.user, *.bat, obj\*, bin\*, .vs\*, .git\*
+languageVersion = 6
