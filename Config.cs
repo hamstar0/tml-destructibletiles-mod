@@ -16,19 +16,25 @@ namespace DestructibleTiles {
 
 		public bool DebugModeInfo = false;
 
+		public bool DestroyedTilesDropItems = false;
+		
 		public bool UseVanillaTileDamageScalesUnlessOverridden = true;
-		public IDictionary<string, float> TileDamageScale = new Dictionary<string, float>();
 
-		public float AfterFirstTileHitDamageScale = 0.75f;
+		public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();f
+		public IDictionary<string, int[]>	ProjectilesAsExplosivesAndRadius = new Dictionary<string, int[]>();f
+		public IDictionary<string, int>		ProjectilesAsConsecutiveHittersAndCooldowns = new Dictionary<string, int>();f
+
+		public IDictionary<string, float>	TileDamageScaleOverrides = new Dictionary<string, float>();f
+		public IDictionary<string, float>	TileArmor = new Dictionary<string, float>();f
 
 
 
 		////////////////
 
 		public void SetDefaults() {
-			this.TileDamageScale.Clear();
+			this.TileDamageScaleOverrides.Clear();
 
-			this.TileDamageScale[ "Terraria."+TileID.MartianConduitPlating ] = 0.1f;
+			this.TileDamageScaleOverrides[ "Terraria."+TileID.MartianConduitPlating ] = 0.1f;
 		}
 
 

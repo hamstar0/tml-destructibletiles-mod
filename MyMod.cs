@@ -1,3 +1,4 @@
+using DestructibleTiles.MultiHitTile;
 using HamstarHelpers.Components.Config;
 using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
 using Terraria.ModLoader;
@@ -14,6 +15,8 @@ namespace DestructibleTiles {
 		public JsonConfig<DestructibleTilesConfigData> ConfigJson { get; private set; }
 		public DestructibleTilesConfigData Config => this.ConfigJson.Data;
 
+		public TileDataManager TileDataMngr;
+
 
 
 		////////////////
@@ -24,6 +27,8 @@ namespace DestructibleTiles {
 				ConfigurationDataBase.RelativePath,
 				new DestructibleTilesConfigData()
 			);
+
+			this.TileDataMngr = new TileDataManager();
 		}
 
 		////////////////

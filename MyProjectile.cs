@@ -16,38 +16,31 @@ namespace DestructibleTiles {
 		////////////////
 		
 		public override bool OnTileCollide( Projectile projectile, Vector2 oldVelocity ) {
-			var dim = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
-			int posX = dim.X + (int)oldVelocity.X;
-			int posY = dim.Y + (int)oldVelocity.Y;
+			float avg = (projectile.width + projectile.height) / 2;
+			bool isOblong = Math.Abs( 1 - (projectile.width / avg) ) > 0.2f;
+			
+			if( isOblong ) {
+				var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
+				rect.X += (int)oldVelocity.X;
+				rect.Y += (int)oldVelocity.Y;
 
-			int projRight = posX + dim.Width;
-			int projBottom = posY + dim.Height;
+				bool onlySometimesRespects;
+				bool respectsPlatforms = Helpers.ProjectileHelpers.ProjectileHelpers.VanillaProjectileRespectsPlatforms( projectile, out onlySometimesRespects )
+					&& !onlySometimesRespects;
 
-			bool onlySometimesRespects;
-			bool respectsPlatforms = Helpers.ProjectileHelpers.ProjectileHelpers.VanillaProjectileRespectsPlatforms( projectile, out onlySometimesRespects )
-				&& !onlySometimesRespects;
+				IDictionary<int, int> hits = Helpers.TileHelpers.TileFinderHelpers.GetSolidTilesInWorldRectangle( rect, respectsPlatforms, false );
 
-			IDictionary<int, int> hits = new Dictionary<int, int>();
+				lock( DestructibleTilesProjectile.MyLock ) {
+					string timerName = "PTH_" + projectile.whoAmI;
+					bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
+					Timers.SetTimer( timerName, 2, () => false );
 
-			for( int i = (posX >> 4); (i<<4) <= projRight; i++ ) {
-				for( int j = (posY >> 4); (j<<4) <= projBottom; j++ ) {
-					Tile tile = Main.tile[i, j];
-					if( TileHelpers.IsAir(tile) ) { continue; }
-
-					if( TileHelpers.IsSolid(tile, respectsPlatforms, false) ) {
-						hits[i] = j;
+					if( !isConsecutive ) {
+						this.HitTilesInSet( projectile, hits );
 					}
 				}
-			}
-
-			lock( DestructibleTilesProjectile.MyLock ) {
-				string timerName = "PTH_" + projectile.whoAmI;
-				bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
-				Timers.SetTimer( timerName, 2, () => false );
-
-				if( !isConsecutive ) {
-					this.HitTiles( projectile, hits );
-				}
+			} else {
+				f
 			}
 
 			return base.OnTileCollide( projectile, oldVelocity );

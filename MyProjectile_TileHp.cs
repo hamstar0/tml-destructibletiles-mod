@@ -11,8 +11,8 @@ namespace DestructibleTiles {
 			float scale = 1f;
 			string tileName = Helpers.TileHelpers.TileIdentityHelpers.GetProperUniqueId( tile );
 
-			if( mymod.Config.TileDamageScale.ContainsKey(tileName) ) {
-				scale = mymod.Config.TileDamageScale[ tileName ];
+			if( mymod.Config.TileDamageScaleOverrides.ContainsKey(tileName) ) {
+				scale = mymod.Config.TileDamageScaleOverrides[ tileName ];
 			}
 
 			if( mymod.Config.UseVanillaTileDamageScalesUnlessOverridden ) {
