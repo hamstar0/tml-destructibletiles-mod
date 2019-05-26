@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -9,12 +8,12 @@ using Terraria.ModLoader;
 
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
-		public static bool HitTile( Projectile projectile, int tileX, int tileY, int totalHits ) {
+		public static bool HitTile( Projectile projectile, int tileX, int tileY, int totalHits, float percent=1f ) {
 			var mymod = DestructibleTilesMod.Instance;
 			HitTile plrTileHits = Main.LocalPlayer.hitTile;
-			f
+			
 			int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );
-			int dmg = DestructibleTilesProjectile.ComputeHitDamage( Main.tile[tileX, tileY], projectile, totalHits );
+			int dmg = (int)(DestructibleTilesProjectile.ComputeHitDamage( Main.tile[tileX, tileY], projectile, totalHits ) * percent);
 
 			if( plrTileHits.AddDamage(tileHitId, dmg, true) >= 100 ) {
 				plrTileHits.Clear( tileHitId );
@@ -53,8 +52,29 @@ namespace DestructibleTiles {
 		}
 
 
-		public void HitTilesInRadius( Projectile projectile ) {
-			f
+		public void HitTilesInRadius( Projectile projectile, int addedRadiusInWorldUnits ) {
+			int radius = ((projectile.width + projectile.height) / 4) + addedRadiusInWorldUnits;
+			int radiusTiles = (int)Math.Round( (double)(radius / 16) );
+			int radiusTilesSquared = radiusTiles * radiusTiles;
+
+			int tileX = (int)projectile.position.X >> 4;
+			int tileY = (int)projectile.position.Y >> 4;
+
+			int left = tileX - radiusTiles;
+			int right = tileX + radiusTiles;
+			int top = tileY - radiusTiles;
+			int bottom = tileY + radiusTiles;
+
+			for( int i=left; i<right; i++ ) {
+				for( int j=top; j<bottom; j++ ) {
+					int distSquared = ( i * i ) + ( j * j );
+					if( distSquared > radiusTilesSquared ) { continue; }
+
+					float percentToCenter = 1f - ((float)distSquared / (float)radiusTilesSquared);
+
+					DestructibleTilesProjectile.HitTile( projectile, i, j, 1, percentToCenter );
+				}
+			}
 		}
 	}
 }

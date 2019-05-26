@@ -1,4 +1,6 @@
 ﻿using HamstarHelpers.Components.DataStructures;
+using HamstarHelpers.Helpers.TmlHelpers;
+using HamstarHelpers.Services.Timers;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,10 +10,25 @@ using Terraria.Utilities;
 
 namespace DestructibleTiles.MultiHitTile {
 	public partial class TileDataManager {
+		private static object MyLock = new object();
+
 		private static UnifiedRandom Rand = new UnifiedRandom();
 		private static int LastCrack = -1;
 
 
+
+		////////////////
+
+		public static bool IsValidTile( int x, int y ) {
+			if( !WorldGen.InWorld( x, y, 0 ) ) { return false; }
+			Tile tile = Main.tile[x, y];
+
+			if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir( tile ) ) { return false; }
+			if( !Main.tileSolid[(int)tile.type] ) { return false; }
+			if( Main.tileSolidTop[(int)tile.type] ) { return false; }
+
+			return true;
+		}
 
 		////////////////
 
@@ -28,13 +45,17 @@ namespace DestructibleTiles.MultiHitTile {
 		////////////////
 
 		public IDictionary<int, IDictionary<int, TileData>> Data = new Dictionary<int, IDictionary<int, TileData>>();
-		private IDictionary<int, int> Order;
+
+		private Func<bool> OnTickGet;
 
 
 
 		////////////////
 
 		public TileDataManager() {
+			this.OnTickGet = Timers.MainOnTickGet();
+			Main.OnTick += TileDataManager._Update;
+
 			if( !Main.dedServ ) {
 				Overlays.Scene["TileEffects"] = new TileEffectsOverlay();
 				Overlays.Scene.Activate( "TileEffects" );
@@ -49,6 +70,7 @@ namespace DestructibleTiles.MultiHitTile {
 			if( !Main.dedServ ) {
 				Main.OnPostDraw -= TileDataManager._DrawPostDrawAll;
 			}
+			Main.OnTick -= TileDataManager._Update;
 		}
 
 
@@ -59,10 +81,14 @@ namespace DestructibleTiles.MultiHitTile {
 				return 0;
 			}
 
-			TileData data = this.Data.Get2DOrDefault( x, y );
-			if( data == null ) {
-				data = new TileData();
-				this.Data.Set2D( x, y, data );
+			TileData data;
+
+			lock( TileDataManager.MyLock ) {
+				data = this.Data.Get2DOrDefault( x, y );
+				if( data == null ) {
+					data = new TileData();
+					this.Data.Set2D( x, y, data );
+				}
 			}
 
 			data.Damage += damage;

@@ -17,8 +17,12 @@ namespace DestructibleTiles {
 		
 		public override bool OnTileCollide( Projectile projectile, Vector2 oldVelocity ) {
 			float avg = (projectile.width + projectile.height) / 2;
+			string timerName = "PTH_" + projectile.whoAmI;
 			bool isOblong = Math.Abs( 1 - (projectile.width / avg) ) > 0.2f;
-			
+
+			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
+			Timers.SetTimer( timerName, 2, () => false );
+
 			if( isOblong ) {
 				var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
 				rect.X += (int)oldVelocity.X;
@@ -29,18 +33,14 @@ namespace DestructibleTiles {
 					&& !onlySometimesRespects;
 
 				IDictionary<int, int> hits = Helpers.TileHelpers.TileFinderHelpers.GetSolidTilesInWorldRectangle( rect, respectsPlatforms, false );
-
-				lock( DestructibleTilesProjectile.MyLock ) {
-					string timerName = "PTH_" + projectile.whoAmI;
-					bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
-					Timers.SetTimer( timerName, 2, () => false );
-
-					if( !isConsecutive ) {
-						this.HitTilesInSet( projectile, hits );
-					}
+				
+				if( !isConsecutive ) {
+					this.HitTilesInSet( projectile, hits );
 				}
 			} else {
-				f
+				if( !isConsecutive ) {
+					this.HitTilesInRadius( projectile, 8 );
+				}
 			}
 
 			return base.OnTileCollide( projectile, oldVelocity );

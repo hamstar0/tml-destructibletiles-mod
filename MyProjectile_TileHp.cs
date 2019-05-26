@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
-		public static int ComputeHitDamage( Tile tile, Projectile projectile, int totalHits ) {
+		public static float ComputeHitDamage( Tile tile, Projectile projectile, int totalHits ) {
 			var mymod = DestructibleTilesMod.Instance;
 			float dmg = (float)projectile.damage / (float)totalHits;
 			float scale = 1f;
@@ -20,11 +20,11 @@ namespace DestructibleTiles {
 				scale *= Helpers.TileHelpers.TileHelpers.GetDamageScale( tile, dmg, out isAbsolute );
 
 				if( isAbsolute ) {
-					return 100;	// max
+					return 100f;	// max
 				}
 			}
 
-			return (int)(dmg * scale);
+			return dmg * scale;
 		}
 	}
 }

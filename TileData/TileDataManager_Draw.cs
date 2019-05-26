@@ -39,49 +39,43 @@ namespace DestructibleTiles.MultiHitTile {
 				return;
 			}*/
 
-			foreach( var kv in this.Data ) {
-				foreach( var kv2 in kv.Value ) {
-					kv2.Value.AnimationTimeElapsed++;
-				}
-			}
+			lock( TileDataManager.MyLock ) {
+				foreach( var kv in this.Data ) {
+					foreach( var kv2 in kv.Value ) {
+						kv2.Value.AnimationTimeElapsed++;
 
-			foreach( var kv in this.Data ) {
-				foreach( var kv2 in kv.Value ) {
-					int x = kv.Key;
-					int y = kv2.Key;
-					Tile tile = Main.tile[x, y];
-					TileData data = kv2.Value;
+						int x = kv.Key;
+						int y = kv2.Key;
+						Tile tile = Main.tile[x, y];
+						TileData data = kv2.Value;
 
-					if( !WorldGen.InWorld( x, y, 0 ) ) { continue; }
-					if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir( tile ) ) { continue; }
-					if( !Main.tileSolid[(int)tile.type] ) { continue; }
-					if( Main.tileSolidTop[(int)tile.type] ) { continue; }
-					if( tile.wall == 0 ) { continue; }
-					if( tile.slope() > 0 ) { continue; }
-					if( tile.halfBrick() ) { continue; }
-					if( TileLoader.IsClosedDoor( tile ) ) { continue; }
+						if( !this.IsValidTile(x, y) ) { continue; }
+						if( tile.slope() > 0 ) { continue; }
+						if( tile.halfBrick() ) { continue; }
+						if( TileLoader.IsClosedDoor( tile ) ) { continue; }
 
-					if( tile.type == 5 ) {
-						int frameX = (int)( tile.frameX / 22 );
-						int frameY = (int)( tile.frameY / 22 );
+						if( tile.type == 5 ) {
+							int frameX = (int)( tile.frameX / 22 );
+							int frameY = (int)( tile.frameY / 22 );
 
-						if( frameY < 9 ) {
-							if( !
-								( ( frameX != 1 && frameX != 2 ) || frameY < 6 || frameY > 8 ) &&
-								( frameX != 3 || frameY > 2 ) &&
-								( frameX != 4 || frameY < 3 || frameY > 5 ) &&
-								( frameX != 5 || frameY < 6 || frameY > 8 )
-							) {
+							if( frameY < 9 ) {
+								if( !
+									( ( frameX != 1 && frameX != 2 ) || frameY < 6 || frameY > 8 ) &&
+									( frameX != 3 || frameY > 2 ) &&
+									( frameX != 4 || frameY < 3 || frameY > 5 ) &&
+									( frameX != 5 || frameY < 6 || frameY > 8 )
+								) {
+									continue;
+								}
+							}
+						} else if( tile.type == 72 ) {
+							if( tile.frameX > 34 ) {
 								continue;
 							}
 						}
-					} else if( tile.type == 72 ) {
-						if( tile.frameX > 34 ) {
-							continue;
-						}
-					}
 
-					this.DrawTileOverlay( sb, x, y, tile, data );
+						this.DrawTileOverlay( sb, x, y, tile, data );
+					}
 				}
 			}
 		}

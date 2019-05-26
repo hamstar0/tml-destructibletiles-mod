@@ -43,6 +43,7 @@
     <Compile Include="Helpers\TileHelpers\TileIdentityHelpers.cs" />
     <Compile Include="Overlay.cs" />
     <Compile Include="TileData\TileData.cs" />
+    <Compile Include="TileData\TileDataManager_Update.cs" />
     <Compile Include="TileData\TileDataManager_Draw.cs" />
     <Compile Include="TileData\TileDataManager.cs" />
     <Compile Include="MyMod.cs" />
