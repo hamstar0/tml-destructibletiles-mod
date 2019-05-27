@@ -49,7 +49,7 @@ namespace DestructibleTiles.MultiHitTile {
 						Tile tile = Main.tile[x, y];
 						TileData data = kv2.Value;
 
-						if( !this.IsValidTile(x, y) ) { continue; }
+						if( !TileDataManager.IsValidTile(x, y) ) { continue; }
 						if( tile.slope() > 0 ) { continue; }
 						if( tile.halfBrick() ) { continue; }
 						if( TileLoader.IsClosedDoor( tile ) ) { continue; }

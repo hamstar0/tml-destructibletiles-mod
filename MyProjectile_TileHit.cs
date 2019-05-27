@@ -57,8 +57,8 @@ namespace DestructibleTiles {
 			int radiusTiles = (int)Math.Round( (double)(radius / 16) );
 			int radiusTilesSquared = radiusTiles * radiusTiles;
 
-			int tileX = (int)projectile.position.X >> 4;
-			int tileY = (int)projectile.position.Y >> 4;
+			int tileX = (int)projectile.Center.X >> 4;
+			int tileY = (int)projectile.Center.Y >> 4;
 
 			int left = tileX - radiusTiles;
 			int right = tileX + radiusTiles;

@@ -20,12 +20,13 @@ namespace DestructibleTiles {
 		
 		public bool UseVanillaTileDamageScalesUnlessOverridden = true;
 
-		public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();f
-		public IDictionary<string, int[]>	ProjectilesAsExplosivesAndRadius = new Dictionary<string, int[]>();f
-		public IDictionary<string, int>		ProjectilesAsConsecutiveHittersAndCooldowns = new Dictionary<string, int>();f
+		public IDictionary<string, int[]>	ProjectilesAsExplosivesAndRadius = new Dictionary<string, int[]>();
+		public IDictionary<string, int[]>	ProjectilesAsConsecutiveHittingAndCooldown = new Dictionary<string, int[]>();
+		public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
+		public IDictionary<string, int>		ProjectilesAsConsecutiveHittersAndCooldowns = new Dictionary<string, int>();
 
-		public IDictionary<string, float>	TileDamageScaleOverrides = new Dictionary<string, float>();f
-		public IDictionary<string, float>	TileArmor = new Dictionary<string, float>();f
+		public IDictionary<string, float>	TileDamageScaleOverrides = new Dictionary<string, float>();
+		public IDictionary<string, float>	TileArmor = new Dictionary<string, float>();
 
 
 

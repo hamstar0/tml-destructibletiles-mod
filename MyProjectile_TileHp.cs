@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HamstarHelpers.Components.DataStructures;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -11,6 +12,11 @@ namespace DestructibleTiles {
 			float scale = 1f;
 			string tileName = Helpers.TileHelpers.TileIdentityHelpers.GetProperUniqueId( tile );
 
+			float armor = mymod.Config.TileArmor.ContainsKey(tileName) ? mymod.Config.TileArmor[ tileName ] : 0f;
+			if( armor >= dmg ) {
+				return 0;
+			}
+			
 			if( mymod.Config.TileDamageScaleOverrides.ContainsKey(tileName) ) {
 				scale = mymod.Config.TileDamageScaleOverrides[ tileName ];
 			}
@@ -24,7 +30,7 @@ namespace DestructibleTiles {
 				}
 			}
 
-			return dmg * scale;
+			return Math.Max( 0, (dmg - armor) * scale );
 		}
 	}
 }
