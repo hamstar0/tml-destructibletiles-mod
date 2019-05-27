@@ -41,7 +41,6 @@ namespace DestructibleTiles {
 						projectiles[projName] = new int[2];
 						projectiles[projName][0] = (proj.width + proj.height) / 4;
 						projectiles[projName][1] = damage > proj.damage ? damage : proj.damage;
-LogHelpers.Log( projName+"("+i+") radius:"+projectiles[projName][0]+", damage:"+projectiles[projName][1]);
 					}
 
 					Main.projectile[proj.whoAmI] = new Projectile();
@@ -65,8 +64,8 @@ LogHelpers.Log( projName+"("+i+") radius:"+projectiles[projName][0]+", damage:"+
 			bool isExplosive = mymod.Config.ProjectilesAsExplosivesAndRadiusAndDamage.ContainsKey( projName );
 
 			if( isExplosive && mymod.Config.ProjectilesAsExplosivesAndRadiusAndDamage[projName].Length == 2 ) {
-				int tileX = (int)projectile.position.X >> 16;
-				int tileY = (int)projectile.position.Y >> 16;
+				int tileX = (int)projectile.position.X >> 4;
+				int tileY = (int)projectile.position.Y >> 4;
 				int radius = mymod.Config.ProjectilesAsExplosivesAndRadiusAndDamage[projName][0];
 				int damage = mymod.Config.ProjectilesAsExplosivesAndRadiusAndDamage[projName][1];
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.TileHelpers;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -11,13 +12,14 @@ namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static bool HitTile( int damage, int tileX, int tileY, int totalHits, float percent = 1f ) {
 			var mymod = DestructibleTilesMod.Instance;
+			Tile tile = Main.tile[tileX, tileY];
 			HitTile plrTileHits = Main.LocalPlayer.hitTile;
 
 			int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );
-			int dmg = (int)( DestructibleTilesProjectile.ComputeHitDamage( Main.tile[tileX, tileY], damage, totalHits ) * percent );
+			int dmg = (int)( DestructibleTilesProjectile.ComputeHitDamage( tile, damage, totalHits ) * percent );
 
 			if( mymod.Config.DebugModeInfo ) {
-				Main.NewText( TileIdentityHelpers.GetVanillaTileName( Main.tile[tileX, tileY].type ) + " hit for " + dmg.ToString( "N2" ) );
+				Main.NewText( TileIdentityHelpers.GetVanillaTileName( tile.type ) + " hit for " + dmg.ToString( "N2" ) );
 			}
 
 			if( plrTileHits.AddDamage( tileHitId, dmg, true ) >= 100 ) {
@@ -30,7 +32,7 @@ namespace DestructibleTiles {
 					NetMessage.SendData( MessageID.TileChange, -1, -1, null, itemDropMode, (float)tileX, (float)tileY, 0f, 0, 0, 0 );
 				}
 
-				Helpers.ParticleHelpers.ParticleFxHelpers.MakeDustCloud( new Vector2( ( tileX * 16 ) + 8, ( tileY * 16 ) + 8 ), 1, 1f, 1.2f );
+				Helpers.ParticleHelpers.ParticleFxHelpers.MakeDustCloud( new Vector2((tileX * 16) + 8, (tileY * 16) + 8), 1, 1f, 1.2f );
 
 				return true;
 			}
@@ -68,10 +70,13 @@ namespace DestructibleTiles {
 
 			for( int i=left; i<right; i++ ) {
 				for( int j=top; j<bottom; j++ ) {
-					int distSquared = ( i * i ) + ( j * j );
-					if( distSquared > radiusTilesSquared ) { continue; }
+					int xOff = i - tileX;
+					int yOff = j - tileY;
 
-					float percentToCenter = 1f - ((float)distSquared / (float)radiusTilesSquared);
+					int currTileDistSquared = (xOff * xOff) + (yOff * yOff);
+					if( currTileDistSquared > radiusTilesSquared ) { continue; }
+
+					float percentToCenter = 1f - ((float)currTileDistSquared / (float)radiusTilesSquared);
 
 					DestructibleTilesProjectile.HitTile( damage, i, j, 1, percentToCenter );
 				}
