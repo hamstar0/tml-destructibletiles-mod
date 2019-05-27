@@ -33,30 +33,15 @@ namespace DestructibleTiles {
 						proj.owner = Main.myPlayer;
 						proj.hostile = true;
 
-						proj.timeLeft = 5;
-						proj.VanillaAI();
-						proj.active = true;
-						damage = damage > proj.damage ? damage : proj.damage;
-
 						proj.timeLeft = 3;
 						proj.VanillaAI();
-						proj.active = true;
 						damage = damage > proj.damage ? damage : proj.damage;
-
-						proj.timeLeft = 1;
-						proj.VanillaAI();
-						proj.active = true;
-						damage = damage > proj.damage ? damage : proj.damage;
-
-						proj.Damage();
-						proj.active = true;
-						damage = damage > proj.damage ? damage : proj.damage;
-						proj.Kill();
-
+						
 						string projName = ProjectileIdentityHelpers.GetProperUniqueId( i );
 						projectiles[projName] = new int[2];
-						projectiles[projName][0] = (proj.width + proj.height ) / 2;
+						projectiles[projName][0] = (proj.width + proj.height) / 4;
 						projectiles[projName][1] = damage > proj.damage ? damage : proj.damage;
+LogHelpers.Log( projName+"("+i+") radius:"+projectiles[projName][0]+", damage:"+projectiles[projName][1]);
 					}
 
 					Main.projectile[proj.whoAmI] = new Projectile();
@@ -84,6 +69,10 @@ namespace DestructibleTiles {
 				int tileY = (int)projectile.position.Y >> 16;
 				int radius = mymod.Config.ProjectilesAsExplosivesAndRadiusAndDamage[projName][0];
 				int damage = mymod.Config.ProjectilesAsExplosivesAndRadiusAndDamage[projName][1];
+
+				if( damage == 0 ) {
+					damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+				}
 
 				if( mymod.Config.DebugModeInfo ) {
 					Main.NewText( "RADIUS - " + projectile.Name + "("+projName+"), radius:" + radius + ", damage:"+damage );
@@ -119,12 +108,13 @@ LogHelpers.Log( projName+" not in "+string.Join(", ", mymod.Config.ProjectilesAs
 						&& !onlySometimesRespects;
 
 					IDictionary<int, int> hits = Helpers.TileHelpers.TileFinderHelpers.GetSolidTilesInWorldRectangle( rect, respectsPlatforms, false );
+					int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
 					if( mymod.Config.DebugModeInfo ) {
 						Main.NewText( "RECTANGLE - " + projectile.Name + " hits #" + hits.Count + " tiles" );
 					}
 
-					this.HitTilesInSet( projectile.damage, hits );
+					this.HitTilesInSet( damage, hits );
 				}
 			}
 

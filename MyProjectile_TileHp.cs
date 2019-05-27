@@ -1,10 +1,30 @@
-﻿using System;
+﻿using HamstarHelpers.Helpers.ProjectileHelpers;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
 
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
+		public static int ComputeProjectileDamage( Projectile projectile ) {
+			var mymod = DestructibleTilesMod.Instance;
+			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
+
+			if( mymod.Config.ProjectileTileDamageOverrides.ContainsKey( projName ) ) {
+				return mymod.Config.ProjectileTileDamageOverrides[projName];
+			}
+
+			if( projectile.damage > 0 ) {
+				return projectile.damage;
+			}
+
+			if( mymod.Config.ProjectileTileDamageDefaults.ContainsKey( projName ) ) {
+				return mymod.Config.ProjectileTileDamageDefaults[projName];
+			}
+
+			return projectile.damage;
+		}
+
 		public static float ComputeHitDamage( Tile tile, int baseDamage, int totalHits ) {
 			var mymod = DestructibleTilesMod.Instance;
 			float dmg = (float)baseDamage / (float)totalHits;

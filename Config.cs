@@ -23,6 +23,8 @@ namespace DestructibleTiles {
 		
 		public bool UseVanillaTileDamageScalesUnlessOverridden = true;
 
+		public IDictionary<string, int>		ProjectileTileDamageDefaults = new Dictionary<string, int>();
+		public IDictionary<string, int>		ProjectileTileDamageOverrides = new Dictionary<string, int>();
 		public IDictionary<string, int[]>	ProjectilesAsExplosivesAndRadiusAndDamage = new Dictionary<string, int[]>();
 		public IDictionary<string, int[]>	ProjectilesAsConsecutiveHittingAndCooldown = new Dictionary<string, int[]>();
 		public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
@@ -39,6 +41,8 @@ namespace DestructibleTiles {
 		}
 
 		public void SetDefaults() {
+			this.ProjectileTileDamageDefaults.Clear();
+			this.ProjectileTileDamageOverrides.Clear();
 			this.ProjectilesAsExplosivesAndRadiusAndDamage.Clear();
 			this.ProjectilesAsConsecutiveHittingAndCooldown.Clear();
 			this.ProjectilesAsPhysicsObjectsAndMaxVelocity.Clear();
@@ -47,6 +51,29 @@ namespace DestructibleTiles {
 			this.TileArmor.Clear();
 
 			this.TileDamageScaleOverrides["Terraria." + TileID.MartianConduitPlating] = 0.1f;
+
+			this.ProjectileTileDamageDefaults["Terraria.30"] = 60;		//Grenade
+			this.ProjectileTileDamageDefaults["Terraria.108"] = 500;    //Explosives
+			this.ProjectileTileDamageDefaults["Terraria.133"] = 40;     //Grenade I
+			this.ProjectileTileDamageDefaults["Terraria.134"] = 40;     //Rocket I
+			this.ProjectileTileDamageDefaults["Terraria.135"] = 40;     //Proximity Mine I
+			this.ProjectileTileDamageDefaults["Terraria.136"] = 40;     //Grenade II
+			this.ProjectileTileDamageDefaults["Terraria.137"] = 40;     //Rocket II
+			this.ProjectileTileDamageDefaults["Terraria.138"] = 40;     //Proximity Mine II
+			this.ProjectileTileDamageDefaults["Terraria.139"] = 65;     //Grenade III
+			this.ProjectileTileDamageDefaults["Terraria.140"] = 65;     //Rocket III
+			this.ProjectileTileDamageDefaults["Terraria.141"] = 65;     //Proximity Mine III
+			this.ProjectileTileDamageDefaults["Terraria.142"] = 65;     //Grenade IV
+			this.ProjectileTileDamageDefaults["Terraria.143"] = 65;     //Rocket IV
+			this.ProjectileTileDamageDefaults["Terraria.164"] = 250;    //Land Mine
+			this.ProjectileTileDamageDefaults["Terraria.338"] = 40;     //Rocket (I; snowman)
+			this.ProjectileTileDamageDefaults["Terraria.339"] = 40;     //Rocket (II; snowman)
+			this.ProjectileTileDamageDefaults["Terraria.340"] = 40;     //Rocket (III; snowman)
+			this.ProjectileTileDamageDefaults["Terraria.341"] = 40;     //Rocket (IV; snowman)
+			this.ProjectileTileDamageDefaults["Terraria.397"] = 60;     //Sticky Grenade
+			this.ProjectileTileDamageDefaults["Terraria.517"] = 65;     //Bouncy Grenade
+			this.ProjectileTileDamageDefaults["Terraria.588"] = 30;		//Happy Grenade
+
 		}
 
 		public void SetProjectileDefaults() {
