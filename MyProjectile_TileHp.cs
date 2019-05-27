@@ -1,14 +1,13 @@
-﻿using HamstarHelpers.Components.DataStructures;
-using System;
+﻿using System;
 using Terraria;
 using Terraria.ModLoader;
 
 
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
-		public static float ComputeHitDamage( Tile tile, Projectile projectile, int totalHits ) {
+		public static float ComputeHitDamage( Tile tile, int baseDamage, int totalHits ) {
 			var mymod = DestructibleTilesMod.Instance;
-			float dmg = (float)projectile.damage / (float)totalHits;
+			float dmg = (float)baseDamage / (float)totalHits;
 			float scale = 1f;
 			string tileName = Helpers.TileHelpers.TileIdentityHelpers.GetProperUniqueId( tile );
 

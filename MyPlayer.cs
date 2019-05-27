@@ -42,6 +42,7 @@ namespace DestructibleTiles {
 
 			if( !mymod.ConfigJson.LoadFile() ) {
 				mymod.ConfigJson.SaveFile();
+				mymod.Config.SetProjectileDefaults();
 			}
 		}
 

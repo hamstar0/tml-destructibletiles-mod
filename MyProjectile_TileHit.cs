@@ -9,12 +9,12 @@ using Terraria.ModLoader;
 
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
-		public static bool HitTile( Projectile projectile, int tileX, int tileY, int totalHits, float percent=1f ) {
+		public static bool HitTile( int damage, int tileX, int tileY, int totalHits, float percent=1f ) {
 			var mymod = DestructibleTilesMod.Instance;
 			HitTile plrTileHits = Main.LocalPlayer.hitTile;
 			
 			int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );
-			int dmg = (int)(DestructibleTilesProjectile.ComputeHitDamage( Main.tile[tileX, tileY], projectile, totalHits ) * percent);
+			int dmg = (int)(DestructibleTilesProjectile.ComputeHitDamage( Main.tile[tileX, tileY], damage, totalHits ) * percent);
 
 			if( mymod.Config.DebugModeInfo ) {
 				Main.NewText( TileIdentityHelpers.GetVanillaTileName(Main.tile[tileX, tileY].type)+" hit for "+dmg.ToString("N2") );
@@ -42,7 +42,7 @@ namespace DestructibleTiles {
 
 		////////////////
 		
-		public void HitTilesInSet( Projectile projectile, IDictionary<int, int> hits ) {
+		public void HitTilesInSet( int damage, IDictionary<int, int> hits ) {
 			var mymod = DestructibleTilesMod.Instance;
 			/*IOrderedEnumerable<KeyValuePair<int, int>> orderedHits;
 
@@ -52,18 +52,14 @@ namespace DestructibleTiles {
 			} );*/
 
 			foreach( var xy in hits ) {
-				DestructibleTilesProjectile.HitTile( projectile, xy.Key, xy.Value, hits.Count );
+				DestructibleTilesProjectile.HitTile( damage, xy.Key, xy.Value, hits.Count );
 			}
 		}
 
 
-		public void HitTilesInRadius( Projectile projectile, int addedRadiusInWorldUnits ) {
-			int radius = ((projectile.width + projectile.height) / 4) + addedRadiusInWorldUnits;
+		public void HitTilesInRadius( int tileX, int tileY, int radius, int damage ) {
 			int radiusTiles = (int)Math.Round( (double)(radius / 16) );
 			int radiusTilesSquared = radiusTiles * radiusTiles;
-
-			int tileX = (int)projectile.Center.X >> 4;
-			int tileY = (int)projectile.Center.Y >> 4;
 
 			int left = tileX - (radiusTiles + 1);
 			int right = tileX + (radiusTiles + 1);
@@ -77,7 +73,7 @@ namespace DestructibleTiles {
 
 					float percentToCenter = 1f - ((float)distSquared / (float)radiusTilesSquared);
 
-					DestructibleTilesProjectile.HitTile( projectile, i, j, 1, percentToCenter );
+					DestructibleTilesProjectile.HitTile( damage, i, j, 1, percentToCenter );
 				}
 			}
 		}

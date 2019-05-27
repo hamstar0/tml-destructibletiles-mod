@@ -32,6 +32,8 @@ namespace DestructibleTiles {
 
 			DestructibleTilesMod.Instance.ConfigJson.SetData( configData );
 			DestructibleTilesMod.Instance.ConfigJson.SaveFile();
+
+			DestructibleTilesMod.Instance.Config.SetProjectileDefaults();
 		}
 	}
 }

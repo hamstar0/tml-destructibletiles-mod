@@ -56,6 +56,12 @@ namespace DestructibleTiles {
 			DestructibleTilesMod.Instance = null;
 		}
 
+		////
+
+		public override void PostSetupContent() {
+			this.Config.SetProjectileDefaults();
+		}
+
 
 		////////////////
 
