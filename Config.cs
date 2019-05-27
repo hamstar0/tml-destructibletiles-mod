@@ -35,8 +35,16 @@ namespace DestructibleTiles {
 
 		////////////////
 
+		public DestructibleTilesConfigData() {
+		}
+
 		public void SetDefaults() {
+			this.ProjectilesAsExplosivesAndRadiusAndDamage.Clear();
+			this.ProjectilesAsConsecutiveHittingAndCooldown.Clear();
+			this.ProjectilesAsPhysicsObjectsAndMaxVelocity.Clear();
+			this.ProjectilesAsConsecutiveHittersAndCooldowns.Clear();
 			this.TileDamageScaleOverrides.Clear();
+			this.TileArmor.Clear();
 
 			this.TileDamageScaleOverrides["Terraria." + TileID.MartianConduitPlating] = 0.1f;
 		}

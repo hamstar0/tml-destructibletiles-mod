@@ -27,22 +27,33 @@ namespace DestructibleTiles {
 					proj.SetDefaults( i );
 
 					if( proj.aiStyle == 16 ) {
-						string projName = ProjectileIdentityHelpers.GetProperUniqueId( i );
-
 						int damage = proj.damage;
+
 						proj.position = new Vector2( 3000, 1000 );
 						proj.owner = Main.myPlayer;
 						proj.hostile = true;
+
+						proj.timeLeft = 5;
+						proj.VanillaAI();
+						proj.active = true;
+						damage = damage > proj.damage ? damage : proj.damage;
 
 						proj.timeLeft = 3;
 						proj.VanillaAI();
 						proj.active = true;
 						damage = damage > proj.damage ? damage : proj.damage;
 
+						proj.timeLeft = 1;
+						proj.VanillaAI();
+						proj.active = true;
+						damage = damage > proj.damage ? damage : proj.damage;
+
 						proj.Damage();
+						proj.active = true;
 						damage = damage > proj.damage ? damage : proj.damage;
 						proj.Kill();
 
+						string projName = ProjectileIdentityHelpers.GetProperUniqueId( i );
 						projectiles[projName] = new int[2];
 						projectiles[projName][0] = (proj.width + proj.height ) / 2;
 						projectiles[projName][1] = damage > proj.damage ? damage : proj.damage;

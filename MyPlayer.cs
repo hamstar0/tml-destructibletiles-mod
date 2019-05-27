@@ -1,5 +1,6 @@
 ﻿using DestructibleTiles.NetProtocols;
 using HamstarHelpers.Components.Network;
+using HamstarHelpers.Helpers.DebugHelpers;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -42,8 +43,8 @@ namespace DestructibleTiles {
 
 			if( !mymod.ConfigJson.LoadFile() ) {
 				mymod.ConfigJson.SaveFile();
-				mymod.Config.SetProjectileDefaults();
 			}
+			mymod.Config.SetProjectileDefaults();
 		}
 
 		private void OnConnectClient() {

@@ -1,5 +1,6 @@
 using DestructibleTiles.MultiHitTile;
 using HamstarHelpers.Components.Config;
+using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
 using Terraria.ModLoader;
 
