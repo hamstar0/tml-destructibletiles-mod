@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HamstarHelpers.Helpers.TileHelpers;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -14,6 +15,10 @@ namespace DestructibleTiles {
 			
 			int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );
 			int dmg = (int)(DestructibleTilesProjectile.ComputeHitDamage( Main.tile[tileX, tileY], projectile, totalHits ) * percent);
+
+			if( mymod.Config.DebugModeInfo ) {
+				Main.NewText( TileIdentityHelpers.GetVanillaTileName(Main.tile[tileX, tileY].type)+" hit for "+dmg.ToString("N2") );
+			}
 
 			if( plrTileHits.AddDamage(tileHitId, dmg, true) >= 100 ) {
 				plrTileHits.Clear( tileHitId );
@@ -60,10 +65,10 @@ namespace DestructibleTiles {
 			int tileX = (int)projectile.Center.X >> 4;
 			int tileY = (int)projectile.Center.Y >> 4;
 
-			int left = tileX - radiusTiles;
-			int right = tileX + radiusTiles;
-			int top = tileY - radiusTiles;
-			int bottom = tileY + radiusTiles;
+			int left = tileX - (radiusTiles + 1);
+			int right = tileX + (radiusTiles + 1);
+			int top = tileY - (radiusTiles + 1);
+			int bottom = tileY + (radiusTiles + 1);
 
 			for( int i=left; i<right; i++ ) {
 				for( int j=top; j<bottom; j++ ) {

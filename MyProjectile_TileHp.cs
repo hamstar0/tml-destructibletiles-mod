@@ -30,7 +30,7 @@ namespace DestructibleTiles {
 				}
 			}
 
-			return Math.Max( 0, (dmg - armor) * scale );
+			return (dmg - armor) * scale;
 		}
 	}
 }
