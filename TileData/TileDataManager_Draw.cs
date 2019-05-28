@@ -93,6 +93,16 @@ namespace DestructibleTiles.MultiHitTile {
 			Color color = Lighting.GetColor( tileX, tileY ) * 0.8f;
 
 			if( data.AnimationTimeDuration > 0 ) {
+				Texture2D tileTex;
+				if( Main.canDrawColorTile( tile.type, (int)tile.color() ) ) {
+					tileTex = Main.tileAltTexture[(int)tile.type, (int)tile.color()];
+				} else {
+					tileTex = Main.tileTexture[(int)tile.type];
+				}
+				if( tileTex == null ) {
+					return;
+				}
+
 				var texFrame = new Rectangle( (int)tile.frameX, (int)tile.frameY, 16, 16 );
 
 				float animProgress = (float)data.AnimationTimeDuration / TileDataManager.HitAnimationMaxDuration;
@@ -101,20 +111,15 @@ namespace DestructibleTiles.MultiHitTile {
 					zoom = 1f - zoom;
 				}
 
-				Texture2D tileTex;
-				if( Main.canDrawColorTile( tile.type, (int)tile.color() ) ) {
-					tileTex = Main.tileAltTexture[(int)tile.type, (int)tile.color()];
-				} else {
-					tileTex = Main.tileTexture[(int)tile.type];
-				}
-
 				scale = new Vector2( zoom * 0.2f + 1f );   // animSwellPercent * 0.45f + 1f;?
 
 				sb.Draw( tileTex, position, new Rectangle?( texFrame ), color, 0f, origin, scale, SpriteEffects.None, 0f );
 			}
 
 			color.A = 180;
-			sb.Draw( Main.tileCrackTexture, position, new Rectangle?(crackFrame), color, 0f, origin, scale, SpriteEffects.None, 0f );
+			if( Main.tileCrackTexture != null ) {
+				sb.Draw( Main.tileCrackTexture, position, new Rectangle?( crackFrame ), color, 0f, origin, scale, SpriteEffects.None, 0f );
+			}
 		}
 	}
 }

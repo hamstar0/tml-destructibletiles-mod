@@ -79,7 +79,7 @@ namespace DestructibleTiles {
 					Main.NewText( "RADIUS - " + projectile.Name + "("+projName+"), radius:" + radius + ", damage:"+damage );
 				}
 
-				this.HitTilesInRadius( tileX, tileY, radius, damage );
+				DestructibleTilesProjectile.HitTilesInRadius( tileX, tileY, radius, damage );
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace DestructibleTiles {
 						Main.NewText( "RECTANGLE - " + projectile.Name + " hits #" + hits.Count + " tiles" );
 					}
 
-					this.HitTilesInSet( damage, hits );
+					DestructibleTilesProjectile.HitTilesInSet( damage, hits );
 				}
 			}
 
