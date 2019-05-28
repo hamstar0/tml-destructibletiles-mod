@@ -23,6 +23,8 @@ namespace DestructibleTiles {
 		
 		public bool UseVanillaTileDamageScalesUnlessOverridden = true;
 
+		public float AllDamagesScale = 1f;
+
 		public IDictionary<string, int>		ProjectileTileDamageDefaults = new Dictionary<string, int>();
 		public IDictionary<string, int>		ProjectileTileDamageOverrides = new Dictionary<string, int>();
 		public IDictionary<string, int[]>	ProjectilesAsExplosivesAndRadiusAndDamage = new Dictionary<string, int[]>();

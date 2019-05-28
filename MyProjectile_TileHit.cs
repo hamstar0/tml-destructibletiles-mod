@@ -13,18 +13,18 @@ namespace DestructibleTiles {
 		public static bool HitTile( int damage, int tileX, int tileY, int totalHits, float percent = 1f ) {
 			var mymod = DestructibleTilesMod.Instance;
 			Tile tile = Main.tile[tileX, tileY];
-			HitTile plrTileHits = Main.LocalPlayer.hitTile;//
+			//HitTile plrTileHits = Main.LocalPlayer.hitTile;
 
-			int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );//
+			//int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );
 			int dmg = (int)( DestructibleTilesProjectile.ComputeHitDamage( tile, damage, totalHits ) * percent );
 
 			if( mymod.Config.DebugModeInfo ) {
 				Main.NewText( TileIdentityHelpers.GetVanillaTileName( tile.type ) + " hit for " + dmg.ToString( "N2" ) );
 			}
 
-			//if( mymod.TileDataMngr.AddDamage( tileX, tileY, dmg ) >= 100 ) {
-			if( plrTileHits.AddDamage( tileHitId, dmg, true ) >= 100 ) {//
-				plrTileHits.Clear( tileHitId );//
+			if( mymod.TileDataMngr.AddDamage( tileX, tileY, dmg ) >= 100 ) {//
+			//if( plrTileHits.AddDamage( tileHitId, dmg, true ) >= 100 ) {
+			//	plrTileHits.Clear( tileHitId );
 				WorldGen.KillTile( tileX, tileY, false, false, !mymod.Config.DestroyedTilesDropItems );
 				if( Main.netMode == 1 ) {
 					int itemDropMode = mymod.Config.DestroyedTilesDropItems ? 0 : 4;

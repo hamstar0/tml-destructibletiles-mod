@@ -38,97 +38,101 @@ namespace DestructibleTiles.MultiHitTile {
 			/*if( !Main.SettingsEnabled_MinersWobble ) {
 				return;
 			}*/
+			
+			foreach( var kv in this.Data ) {
+				foreach( var kv2 in kv.Value ) {
+					int x = kv.Key;
+					int y = kv2.Key;
+					Tile tile = Main.tile[x, y];
+					TileData data = kv2.Value;
 
-			lock( TileDataManager.MyLock ) {
-				foreach( var kv in this.Data ) {
-					foreach( var kv2 in kv.Value ) {
-						int x = kv.Key;
-						int y = kv2.Key;
-						Tile tile = Main.tile[x, y];
-						TileData data = kv2.Value;
+					if( data.AnimationTimeDuration > 0 ) {
+						data.AnimationTimeDuration--;
+					}
 
-						if( data.AnimationTimeDuration > 0 ) {
-							data.AnimationTimeDuration--;
-						}
+					if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir(tile) ) { continue; }
+					if( !TileDataManager.IsValidTile(x, y) ) { continue; }
+					if( tile.slope() > 0 ) { continue; }
+					if( tile.halfBrick() ) { continue; }
+					if( TileLoader.IsClosedDoor( tile ) ) { continue; }
 
-						if( !TileDataManager.IsValidTile(x, y) ) { continue; }
-						if( tile.slope() > 0 ) { continue; }
-						if( tile.halfBrick() ) { continue; }
-						if( TileLoader.IsClosedDoor( tile ) ) { continue; }
+					if( tile.type == 5 ) {
+						int frameX = (int)( tile.frameX / 22 );
+						int frameY = (int)( tile.frameY / 22 );
 
-						if( tile.type == 5 ) {
-							int frameX = (int)( tile.frameX / 22 );
-							int frameY = (int)( tile.frameY / 22 );
-
-							if( frameY < 9 ) {
-								if( !
-									( ( frameX != 1 && frameX != 2 ) || frameY < 6 || frameY > 8 ) &&
-									( frameX != 3 || frameY > 2 ) &&
-									( frameX != 4 || frameY < 3 || frameY > 5 ) &&
-									( frameX != 5 || frameY < 6 || frameY > 8 )
-								) {
-									continue;
-								}
-							}
-						} else if( tile.type == 72 ) {
-							if( tile.frameX > 34 ) {
+						if( frameY < 9 ) {
+							if( !
+								( ( frameX != 1 && frameX != 2 ) || frameY < 6 || frameY > 8 ) &&
+								( frameX != 3 || frameY > 2 ) &&
+								( frameX != 4 || frameY < 3 || frameY > 5 ) &&
+								( frameX != 5 || frameY < 6 || frameY > 8 )
+							) {
 								continue;
 							}
 						}
-
-						this.DrawTileOverlay( sb, x, y, tile, data );
+					} else if( tile.type == 72 ) {
+						if( tile.frameX > 34 ) {
+							continue;
+						}
 					}
+
+					this.DrawTileOverlay( sb, x, y, data );
 				}
 			}
 		}
 
 
-		public void DrawTileOverlay( SpriteBatch sb, int x, int y, Tile tile, TileData data ) {
-			int crackPercent = 0;
+		public void DrawTileOverlay( SpriteBatch sb, int tileX, int tileY, TileData data ) {
+			Tile tile = Main.tile[ tileX, tileY ];
+
+			int crackStage = 0;
 			if( data.Damage >= 80 ) {
-				crackPercent = 3;
+				crackStage = 3;
 			} else if( data.Damage >= 60 ) {
-				crackPercent = 2;
+				crackStage = 2;
 			} else if( data.Damage >= 40 ) {
-				crackPercent = 1;
+				crackStage = 1;
 			} else if( data.Damage >= 20 ) {
-				crackPercent = 0;
+				crackStage = 0;
 			}
 
-			var crackFrame = new Rectangle( data.CrackStyle * 18, crackPercent * 18, 16, 16 );
+			var crackFrame = new Rectangle( data.CrackStyle * 18, crackStage * 18, 16, 16 );
 			crackFrame.Inflate( -2, -2 );
 			if( tile.type == 5 || tile.type == 72 ) {
-				crackFrame.X = ( 4 + data.CrackStyle / 2 ) * 18;
-			}
-
-			Color color = Lighting.GetColor( x, y ) * 0.8f;
-			float animProgress = (float)data.AnimationTimeDuration / 10f;
-			float animSwellPercent = animProgress % 0.5f;
-			animSwellPercent *= 2;
-			if( animProgress <= 1f ) {
-				animSwellPercent = 1f - animSwellPercent;
-			}
-
-			Tile tileSafely = Framing.GetTileSafely( x, y );
-			Texture2D tileTex;
-			if( Main.canDrawColorTile( tileSafely.type, (int)tileSafely.color() ) ) {
-				tileTex = Main.tileAltTexture[(int)tileSafely.type, (int)tileSafely.color()];
-			} else {
-				tileTex = Main.tileTexture[(int)tileSafely.type];
+				crackFrame.X = (4 + (data.CrackStyle / 2)) * 18;
 			}
 
 			var origin = new Vector2( 8f );
-			var scale = new Vector2( animSwellPercent * 0.2f + 1f );   // animSwellPercent * 0.45f + 1f;?
-			Vector2 position = new Vector2(
-				(float)( origin.X + ( x * 16 ) - (int)Main.screenPosition.X ),
-				(float)( origin.Y + ( y * 16 ) - (int)Main.screenPosition.Y )
+			var scale = new Vector2( 1f );
+			var position = new Vector2(
+				(float)( origin.X + (tileX * 16) - (int)Main.screenPosition.X ),
+				(float)( origin.Y + (tileY * 16) - (int)Main.screenPosition.Y )
 			).Floor();
+			Color color = Lighting.GetColor( tileX, tileY ) * 0.8f;
 
-			var texFrame = new Rectangle( (int)tile.frameX, (int)tile.frameY, 16, 16 );
+			if( data.AnimationTimeDuration > 0 ) {
+				var texFrame = new Rectangle( (int)tile.frameX, (int)tile.frameY, 16, 16 );
 
-			sb.Draw( tileTex, position, new Rectangle?( texFrame ), color, 0f, origin, scale, SpriteEffects.None, 0f );
+				float animProgress = (float)data.AnimationTimeDuration / TileDataManager.HitAnimationMaxDuration;
+				float zoom = (animProgress % 0.5f) * 2;
+				if( animProgress >= 0.5f ) {
+					zoom = 1f - zoom;
+				}
+
+				Texture2D tileTex;
+				if( Main.canDrawColorTile( tile.type, (int)tile.color() ) ) {
+					tileTex = Main.tileAltTexture[(int)tile.type, (int)tile.color()];
+				} else {
+					tileTex = Main.tileTexture[(int)tile.type];
+				}
+
+				scale = new Vector2( zoom * 0.2f + 1f );   // animSwellPercent * 0.45f + 1f;?
+
+				sb.Draw( tileTex, position, new Rectangle?( texFrame ), color, 0f, origin, scale, SpriteEffects.None, 0f );
+			}
+
 			color.A = 180;
-			sb.Draw( Main.tileCrackTexture, position, new Rectangle?( crackFrame ), color, 0f, origin, scale, SpriteEffects.None, 0f );
+			sb.Draw( Main.tileCrackTexture, position, new Rectangle?(crackFrame), color, 0f, origin, scale, SpriteEffects.None, 0f );
 		}
 	}
 }

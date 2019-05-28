@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.TmlHelpers;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.TmlHelpers;
 using System;
 using System.Linq;
 
@@ -19,18 +20,19 @@ namespace DestructibleTiles.MultiHitTile {
 
 		internal void Update() {
 			if( !LoadHelpers.IsWorldBeingPlayed() ) { return; }
+			
+			foreach( var kv in this.Data ) {
+				foreach( var kv2 in kv.Value.ToArray() ) {
+					int x = kv.Key;
+					int y = kv2.Key;
+					TileData data = kv2.Value;
 
-			lock( TileDataManager.MyLock ) {
-				foreach( var kv in this.Data ) {
-					foreach( var kv2 in kv.Value.ToArray() ) {
-						int x = kv.Key;
-						int y = kv2.Key;
-						TileData data = kv2.Value;
-
-						if( !TileDataManager.IsValidTile(x, y) ) {
-							kv.Value.Remove( y );
-						} else if( data.Damage > 0 && data.TTL-- <= 0 ) {
+					if( !TileDataManager.IsValidTile(x, y) ) {
+						this.Data[x].Remove( y );
+					} else if( data.Damage > 0 ) {
+						if( data.TTL-- <= 0 ) {
 							data.Damage = 0;
+							data.TTL = 0;
 						}
 					}
 				}

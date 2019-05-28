@@ -71,6 +71,8 @@ namespace DestructibleTiles {
 
 				if( damage == 0 ) {
 					damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+				} else {
+					damage = (int)((float)damage * mymod.Config.AllDamagesScale);
 				}
 
 				if( mymod.Config.DebugModeInfo ) {

@@ -15,14 +15,14 @@ namespace DestructibleTiles {
 			}
 
 			if( projectile.damage > 0 ) {
-				return projectile.damage;
+				return (int)((float)projectile.damage * mymod.Config.AllDamagesScale);
 			}
 
 			if( mymod.Config.ProjectileTileDamageDefaults.ContainsKey( projName ) ) {
-				return mymod.Config.ProjectileTileDamageDefaults[projName];
+				return (int)((float)mymod.Config.ProjectileTileDamageDefaults[projName] * mymod.Config.AllDamagesScale);
 			}
 
-			return projectile.damage;
+			return (int)((float)projectile.damage * mymod.Config.AllDamagesScale );
 		}
 
 		public static float ComputeHitDamage( Tile tile, int baseDamage, int totalHits ) {
