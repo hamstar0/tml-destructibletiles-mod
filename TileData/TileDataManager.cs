@@ -60,20 +60,16 @@ namespace DestructibleTiles.MultiHitTile {
 			Main.OnTick += TileDataManager._Update;
 
 			if( !Main.dedServ ) {
-				Overlays.Scene["TileEffects"] = new TileEffectsOverlay();
-				Overlays.Scene.Activate( "TileEffects" );
-
-				Main.OnPostDraw += TileDataManager._DrawPostDrawAll;
+				Overlays.Scene["TileDamageEffects"] = new TileEffectsOverlay();
+				Overlays.Scene.Activate( "TileDamageEffects" );
 			}
 		}
 
 		////
 
 		~TileDataManager() {
-			if( !Main.dedServ ) {
-				Main.OnPostDraw -= TileDataManager._DrawPostDrawAll;
-			}
 			Main.OnTick -= TileDataManager._Update;
+			Overlays.Scene["TileDamageEffects"].Deactivate();
 		}
 
 

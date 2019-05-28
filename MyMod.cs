@@ -28,8 +28,6 @@ namespace DestructibleTiles {
 				ConfigurationDataBase.RelativePath,
 				new DestructibleTilesConfigData()
 			);
-
-			this.TileDataMngr = new TileDataManager();
 		}
 
 		////////////////
@@ -38,6 +36,8 @@ namespace DestructibleTiles {
 			DestructibleTilesMod.Instance = this;
 
 			this.LoadConfig();
+
+			this.TileDataMngr = new TileDataManager();
 		}
 
 		private void LoadConfig() {

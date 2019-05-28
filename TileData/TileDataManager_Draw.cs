@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Helpers.XnaHelpers;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,82 +8,64 @@ using Terraria.ModLoader;
 
 namespace DestructibleTiles.MultiHitTile {
 	public partial class TileDataManager {
-		private static void _DrawPostDrawAll( GameTime _ ) {
-			var mymod = DestructibleTilesMod.Instance;
-			if( mymod == null ) { return; }
-			var mngr = mymod.TileDataMngr;
-			if( mngr == null ) { return; }
-
-			bool __;
-			XnaHelpers.DrawBatch(
-				( sb ) => {
-					var mymod2 = DestructibleTilesMod.Instance;
-					mymod2.TileDataMngr.DrawTileOverlays( sb );
-				},
-				SpriteSortMode.Deferred,
-				BlendState.AlphaBlend,
-				Main.DefaultSamplerState,
-				DepthStencilState.None,
-				Main.instance.Rasterizer,
-				null,
-				Main.BackgroundViewMatrix.TransformationMatrix,
-				out __
-			);
-		}
-
-
-		////////////////
-
 		public void DrawTileOverlays( SpriteBatch sb ) {
-			/*if( !Main.SettingsEnabled_MinersWobble ) {
-				return;
-			}*/
-			
 			foreach( var kv in this.Data ) {
 				foreach( var kv2 in kv.Value ) {
 					int x = kv.Key;
 					int y = kv2.Key;
-					Tile tile = Main.tile[x, y];
-					TileData data = kv2.Value;
 
-					if( data.AnimationTimeDuration > 0 ) {
-						data.AnimationTimeDuration--;
+					if( this.CanDrawTileOverlay( x, y ) ) {
+						this.DrawTileOverlay( sb, x, y );
 					}
-
-					if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir(tile) ) { continue; }
-					if( !TileDataManager.IsValidTile(x, y) ) { continue; }
-					if( tile.slope() > 0 ) { continue; }
-					if( tile.halfBrick() ) { continue; }
-					if( TileLoader.IsClosedDoor( tile ) ) { continue; }
-
-					if( tile.type == 5 ) {
-						int frameX = (int)( tile.frameX / 22 );
-						int frameY = (int)( tile.frameY / 22 );
-
-						if( frameY < 9 ) {
-							if( !
-								( ( frameX != 1 && frameX != 2 ) || frameY < 6 || frameY > 8 ) &&
-								( frameX != 3 || frameY > 2 ) &&
-								( frameX != 4 || frameY < 3 || frameY > 5 ) &&
-								( frameX != 5 || frameY < 6 || frameY > 8 )
-							) {
-								continue;
-							}
-						}
-					} else if( tile.type == 72 ) {
-						if( tile.frameX > 34 ) {
-							continue;
-						}
-					}
-
-					this.DrawTileOverlay( sb, x, y, data );
 				}
 			}
 		}
 
+		public bool CanDrawTileOverlay( int tileX, int tileY ) {
+			/*if( !Main.SettingsEnabled_MinersWobble ) {
+				return;
+			}*/
+			
+			Tile tile = Main.tile[tileX, tileY];
+			TileData data = this.Data[tileX][tileY];
 
-		public void DrawTileOverlay( SpriteBatch sb, int tileX, int tileY, TileData data ) {
+			if( data.AnimationTimeDuration > 0 ) {
+				data.AnimationTimeDuration--;
+			}
+
+			if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir(tile) ) { return false; }
+			if( !TileDataManager.IsValidTile(tileX, tileY) ) { return false; }
+			if( tile.slope() > 0 ) { return false; }
+			if( tile.halfBrick() ) { return false; }
+			if( TileLoader.IsClosedDoor( tile ) ) { return false; }
+
+			if( tile.type == 5 ) {
+				int frameX = (int)( tile.frameX / 22 );
+				int frameY = (int)( tile.frameY / 22 );
+
+				if( frameY < 9 ) {
+					if( !
+						( ( frameX != 1 && frameX != 2 ) || frameY < 6 || frameY > 8 ) &&
+						( frameX != 3 || frameY > 2 ) &&
+						( frameX != 4 || frameY < 3 || frameY > 5 ) &&
+						( frameX != 5 || frameY < 6 || frameY > 8 )
+					) {
+						return false;
+					}
+				}
+			} else if( tile.type == 72 ) {
+				if( tile.frameX > 34 ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
+		public void DrawTileOverlay( SpriteBatch sb, int tileX, int tileY ) {
 			Tile tile = Main.tile[ tileX, tileY ];
+			TileData data = this.Data[tileX][tileY];
 
 			int crackStage = 0;
 			if( data.Damage >= 80 ) {
