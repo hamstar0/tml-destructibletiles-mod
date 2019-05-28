@@ -42,12 +42,14 @@ namespace DestructibleTiles.MultiHitTile {
 			lock( TileDataManager.MyLock ) {
 				foreach( var kv in this.Data ) {
 					foreach( var kv2 in kv.Value ) {
-						kv2.Value.AnimationTimeElapsed++;
-
 						int x = kv.Key;
 						int y = kv2.Key;
 						Tile tile = Main.tile[x, y];
 						TileData data = kv2.Value;
+
+						if( data.AnimationTimeDuration > 0 ) {
+							data.AnimationTimeDuration--;
+						}
 
 						if( !TileDataManager.IsValidTile(x, y) ) { continue; }
 						if( tile.slope() > 0 ) { continue; }
@@ -100,10 +102,10 @@ namespace DestructibleTiles.MultiHitTile {
 			}
 
 			Color color = Lighting.GetColor( x, y ) * 0.8f;
-			float animProgress = (float)data.AnimationTimeElapsed / 10f;
+			float animProgress = (float)data.AnimationTimeDuration / 10f;
 			float animSwellPercent = animProgress % 0.5f;
 			animSwellPercent *= 2;
-			if( animProgress > 1f ) {
+			if( animProgress <= 1f ) {
 				animSwellPercent = 1f - animSwellPercent;
 			}
 

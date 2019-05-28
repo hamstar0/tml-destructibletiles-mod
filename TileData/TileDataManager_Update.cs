@@ -25,9 +25,12 @@ namespace DestructibleTiles.MultiHitTile {
 					foreach( var kv2 in kv.Value.ToArray() ) {
 						int x = kv.Key;
 						int y = kv2.Key;
+						TileData data = kv2.Value;
 
 						if( !TileDataManager.IsValidTile(x, y) ) {
 							kv.Value.Remove( y );
+						} else if( data.Damage > 0 && data.TTL-- <= 0 ) {
+							data.Damage = 0;
 						}
 					}
 				}

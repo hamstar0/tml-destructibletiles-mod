@@ -97,7 +97,6 @@ namespace DestructibleTiles {
 
 			if( !isConsecutive ) {
 				if( !isExplosive ) {
-LogHelpers.Log( projName+" not in "+string.Join(", ", mymod.Config.ProjectilesAsExplosivesAndRadiusAndDamage.Keys));
 					var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
 					rect.X += (int)oldVelocity.X;
 					rect.Y += (int)oldVelocity.Y;

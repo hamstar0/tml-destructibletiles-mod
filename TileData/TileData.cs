@@ -7,7 +7,7 @@ namespace DestructibleTiles.MultiHitTile {
 		public int TileType;
 		public int TTL;
 		public int CrackStyle;
-		public int AnimationTimeElapsed;
+		public int AnimationTimeDuration;
 		//public Vector2 AnimationDirection;
 
 

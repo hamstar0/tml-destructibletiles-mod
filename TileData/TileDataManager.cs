@@ -92,8 +92,8 @@ namespace DestructibleTiles.MultiHitTile {
 			}
 
 			data.Damage += damage;
-			data.TTL = 60;
-			data.AnimationTimeElapsed = 0;
+			data.TTL = 60 * 60;
+			data.AnimationTimeDuration = 200;
 			//data.AnimationDirection = ( Main.rand.NextFloat() * 6.28318548f ).ToRotationVector2() * 2f;
 
 			return data.Damage;
