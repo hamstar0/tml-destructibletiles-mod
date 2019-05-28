@@ -20,6 +20,8 @@ namespace DestructibleTiles {
 			if( !DestructibleTilesMod.Instance.ConfigJson.LoadFile() ) {
 				DestructibleTilesMod.Instance.ConfigJson.SaveFile();
 			}
+
+			DestructibleTilesMod.Instance.Config.SetProjectileDefaults();
 		}
 
 		public static void ResetConfigFromDefaults() {
