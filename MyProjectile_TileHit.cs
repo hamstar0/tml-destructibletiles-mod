@@ -40,11 +40,10 @@ namespace DestructibleTiles {
 			return false;
 		}
 
-
-
+		
 		////////////////
 		
-		public void HitTilesInSet( int damage, IDictionary<int, int> hits ) {
+		public static void HitTilesInSet( int damage, IDictionary<int, int> hits ) {
 			var mymod = DestructibleTilesMod.Instance;
 			/*IOrderedEnumerable<KeyValuePair<int, int>> orderedHits;
 
@@ -59,7 +58,7 @@ namespace DestructibleTiles {
 		}
 
 
-		public void HitTilesInRadius( int tileX, int tileY, int radius, int damage ) {
+		public static void HitTilesInRadius( int tileX, int tileY, int radius, int damage ) {
 			int radiusTiles = (int)Math.Round( (double)(radius / 16) );
 			int radiusTilesSquared = radiusTiles * radiusTiles;
 

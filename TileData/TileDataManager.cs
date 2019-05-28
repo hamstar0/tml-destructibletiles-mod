@@ -21,9 +21,9 @@ namespace DestructibleTiles.MultiHitTile {
 
 		////////////////
 
-		public static bool IsValidTile( int x, int y ) {
-			if( !WorldGen.InWorld( x, y, 0 ) ) { return false; }
-			Tile tile = Main.tile[x, y];
+		public static bool IsValidTile( int tileX, int tileY ) {
+			if( !WorldGen.InWorld( tileX, tileY, 0 ) ) { return false; }
+			Tile tile = Main.tile[tileX, tileY];
 
 			if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir(tile) ) { return false; }
 			if( !tile.active() ) { return false; }
