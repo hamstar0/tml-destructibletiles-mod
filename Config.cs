@@ -27,13 +27,19 @@ namespace DestructibleTiles {
 
 		public IDictionary<string, int>		ProjectileTileDamageDefaults = new Dictionary<string, int>();
 		public IDictionary<string, int>		ProjectileTileDamageOverrides = new Dictionary<string, int>();
-		public IDictionary<string, int[]>	ProjectilesAsExplosivesAndRadiusAndDamage = new Dictionary<string, int[]>();
-		public IDictionary<string, int[]>	ProjectilesAsConsecutiveHittingAndCooldown = new Dictionary<string, int[]>();
-		public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
-		public IDictionary<string, int>		ProjectilesAsConsecutiveHittersAndCooldowns = new Dictionary<string, int>();
+		public IDictionary<string, int>		ProjectilesAsExplosivesAndRadius = new Dictionary<string, int>();
+		//public IDictionary<string, int[]>	ProjectilesAsConsecutiveHittingAndCooldown = new Dictionary<string, int[]>();
+		//public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
 
 		public IDictionary<string, float>	TileDamageScaleOverrides = new Dictionary<string, float>();
 		public IDictionary<string, float>	TileArmor = new Dictionary<string, float>();
+
+
+		////
+
+		public string _OLD_SETTINGS_BELOW_ = "";
+
+		public IDictionary<string, int[]> ProjectilesAsExplosivesAndRadiusAndDamage = new Dictionary<string, int[]>();
 
 
 
@@ -45,10 +51,9 @@ namespace DestructibleTiles {
 		public void SetDefaults() {
 			this.ProjectileTileDamageDefaults.Clear();
 			this.ProjectileTileDamageOverrides.Clear();
-			this.ProjectilesAsExplosivesAndRadiusAndDamage.Clear();
-			this.ProjectilesAsConsecutiveHittingAndCooldown.Clear();
-			this.ProjectilesAsPhysicsObjectsAndMaxVelocity.Clear();
-			this.ProjectilesAsConsecutiveHittersAndCooldowns.Clear();
+			this.ProjectilesAsExplosivesAndRadius.Clear();
+			//this.ProjectilesAsConsecutiveHittingAndCooldown.Clear();
+			//this.ProjectilesAsPhysicsObjectsAndMaxVelocity.Clear();
 			this.TileDamageScaleOverrides.Clear();
 			this.TileArmor.Clear();
 
@@ -80,7 +85,21 @@ namespace DestructibleTiles {
 
 		public void SetProjectileDefaults() {
 			if( !this.AutoLoadDefaultExplosiveProjectiles ) { return; }
-			this.ProjectilesAsExplosivesAndRadiusAndDamage = DestructibleTilesProjectile.GetExplosives();
+
+			IDictionary<string, Tuple<int, int>> explosiveProjs = DestructibleTilesProjectile.GetExplosives();
+
+			foreach( var kv in explosiveProjs ) {
+				string projName = kv.Key;
+				int radius = kv.Value.Item1;
+				int damage = kv.Value.Item2;
+
+				if( !this.ProjectilesAsExplosivesAndRadius.ContainsKey(projName) ) {
+					this.ProjectilesAsExplosivesAndRadius[projName] = radius;
+				}
+				if( !this.ProjectileTileDamageDefaults.ContainsKey( projName ) ) {
+					this.ProjectileTileDamageDefaults[projName] = damage;
+				}
+			}
 		}
 
 		public override void OnLoad( bool success ) {
