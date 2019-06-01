@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using DestructibleTiles.Helpers.CollisionHelpers;
 using DestructibleTiles.Helpers.TileHelpers;
 using HamstarHelpers.Helpers.DebugHelpers;
@@ -19,47 +18,7 @@ namespace DestructibleTiles {
 
 		////////////////
 
-		public static IDictionary<string, Tuple<int, int>> GetExplosives() {
-			var projectiles = new Dictionary<string, Tuple<int, int>>();
-
-			for( int i = 0; i < Main.projectileTexture.Length; i++ ) {
-				var proj = new Projectile();
-				Main.projectile[0] = proj;
-
-				try {
-					proj.SetDefaults( i );
-
-					if( proj.aiStyle == 16 ) {
-						int damage = proj.damage;
-
-						proj.position = new Vector2( 3000, 1000 );
-						proj.owner = Main.myPlayer;
-						proj.hostile = true;
-
-						proj.timeLeft = 3;
-						proj.VanillaAI();
-
-						int radius = ( proj.width + proj.height ) / 4;
-						damage = damage > proj.damage ? damage : proj.damage;
-						
-						string projName = ProjectileIdentityHelpers.GetProperUniqueId( i );
-						projectiles[projName] = Tuple.Create( radius, damage );
-					}
-				} catch {
-					continue;
-				}
-			}
-
-			Main.projectile[0] = new Projectile();
-
-			return projectiles;
-		}
-
-
-
-		////////////////
-
-		public override bool PreAI( Projectile projectile ) {
+		public override void AI( Projectile projectile ) {
 			if( projectile.aiStyle == 84 ) {
 				Vector2 projPos = projectile.Center + projectile.velocity * projectile.localAI[1];
 				Point? tilePosNull = TileFinderHelpers.GetNearestSolidTile( projPos, 32, false, false );
@@ -73,16 +32,14 @@ namespace DestructibleTiles {
 					int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
 					if( DestructibleTilesProjectile.HitTile( damage, tilePos.X, tilePos.Y, 1 ) ) {
-						projectile.localAI[1] = CollisionHelpers.MeasureWorldDistanceToTile( projectile.Center, projectile.velocity, 2400f );
-
+						bool _;
+						projectile.localAI[1] = CollisionHelpers.MeasureWorldDistanceToTile( projectile.Center, projectile.velocity, 2400f, out _ );
 					}
 //var pos1 = tilePos.ToVector2() * 16f;
 //var pos2 = new Vector2( pos1.X + 16, pos1.Y + 16 );
 //Dust.QuickBox( pos1, pos2, 0, Color.Red, d => { } );
 				}
 			}
-
-			return base.PreAI( projectile );
 		}
 
 
@@ -113,36 +70,53 @@ namespace DestructibleTiles {
 
 		public override bool OnTileCollide( Projectile projectile, Vector2 oldVelocity ) {
 			var mymod = DestructibleTilesMod.Instance;
+			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
 
-			//float avg = (projectile.width + projectile.height) / 2;
-			//bool isOblong = Math.Abs( 1 - (projectile.width / avg) ) > 0.2f;
-			
+			if( mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName ) ) {
+				return base.OnTileCollide( projectile, oldVelocity );
+			}
+
 			string timerName = "PTH_" + projectile.whoAmI;
 			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
+
 			Timers.SetTimer( timerName, 2, () => false );
 
-			if( !isConsecutive ) {
-				string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
-				bool isExplosive = mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName );
+			if( isConsecutive ) {
+				if( mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown.ContainsKey( projName ) ) {
+					string repeatTimerName = timerName + "_repeat";
+					int cooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown[projName];
 
-				if( !isExplosive ) {
-					var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
-					rect.X += (int)oldVelocity.X;
-					rect.Y += (int)oldVelocity.Y;
-
-					bool onlySometimesRespects;
-					bool respectsPlatforms = Helpers.ProjectileHelpers.ProjectileHelpers.VanillaProjectileRespectsPlatforms( projectile, out onlySometimesRespects )
-						&& !onlySometimesRespects;
-
-					IDictionary<int, int> hits = Helpers.TileHelpers.TileFinderHelpers.GetSolidTilesInWorldRectangle( rect, respectsPlatforms, false );
-					int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
-
-					if( mymod.Config.DebugModeInfo ) {
-						Main.NewText( "RECTANGLE - " + projectile.Name + " hits #" + hits.Count + " tiles" );
+					if( Timers.GetTimerTickDuration(repeatTimerName) <= 0 ) {
+						Timers.SetTimer( repeatTimerName, cooldown, () => false );
+						isConsecutive = false;
 					}
-
-					DestructibleTilesProjectile.HitTilesInSet( damage, hits );
 				}
+			}
+
+			if( !isConsecutive ) {
+				var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
+				rect.X += (int)oldVelocity.X;
+				rect.Y += (int)oldVelocity.Y;
+
+				bool onlySometimesRespects;
+				bool respectsPlatforms = Helpers.ProjectileHelpers.ProjectileHelpers.VanillaProjectileRespectsPlatforms( projectile, out onlySometimesRespects )
+					&& !onlySometimesRespects;
+
+				int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+
+				IDictionary<int, int> hits = Helpers.TileHelpers.TileFinderHelpers.GetSolidTilesInWorldRectangle( rect, respectsPlatforms, false );
+				if( hits.Count == 0 ) {
+					Point? point = TileFinderHelpers.GetNearestSolidTile( projectile.Center, 32, respectsPlatforms, false );
+					if( point.HasValue ) {
+						hits[ point.Value.X ] = point.Value.Y;
+					}
+				}
+
+				if( mymod.Config.DebugModeInfo ) {
+					Main.NewText( "RECTANGLE - " + projectile.Name + " hits #" + hits.Count + " tiles" );
+				}
+
+				DestructibleTilesProjectile.HitTilesInSet( damage, hits );
 			}
 
 			return base.OnTileCollide( projectile, oldVelocity );
