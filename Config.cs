@@ -32,7 +32,9 @@ namespace DestructibleTiles {
 		//public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
 
 		public IDictionary<string, float>	TileDamageScaleOverrides = new Dictionary<string, float>();
-		public IDictionary<string, float>	TileArmor = new Dictionary<string, float>();
+		public IDictionary<string, float> TileArmor = new Dictionary<string, float>();
+
+		public float BeamDamageScale = 1f / 30f;
 
 
 		////
@@ -81,9 +83,9 @@ namespace DestructibleTiles {
 			this.ProjectileTileDamageDefaults["Terraria.517"] = 65;     //Bouncy Grenade
 			this.ProjectileTileDamageDefaults["Terraria.588"] = 30;		//Happy Grenade
 
-			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire] = 60 * 2;
-			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire2] = 60 * 2;
-			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire3] = 60 * 2;
+			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire] = 45;
+			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire2] = 45;
+			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire3] = 45;
 		}
 
 		public void SetProjectileDefaults() {

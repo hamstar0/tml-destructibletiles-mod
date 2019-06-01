@@ -15,15 +15,25 @@ namespace DestructibleTiles {
 			}
 
 			if( projectile.damage > 0 ) {
-				return (int)((float)projectile.damage * mymod.Config.AllDamagesScale);
+				return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );
 			}
 
 			if( mymod.Config.ProjectileTileDamageDefaults.ContainsKey( projName ) ) {
-				return (int)((float)mymod.Config.ProjectileTileDamageDefaults[projName] * mymod.Config.AllDamagesScale);
+				return (int)( (float)mymod.Config.ProjectileTileDamageDefaults[projName] * mymod.Config.AllDamagesScale );
 			}
 
-			return (int)((float)projectile.damage * mymod.Config.AllDamagesScale );
+			return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );
 		}
+
+		public static int ComputeBeamProjectileDamage( Projectile projectile ) {
+			var mymod = DestructibleTilesMod.Instance;
+			int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+
+			return (int)((float)damage * mymod.Config.BeamDamageScale);
+		}
+
+
+		////
 
 		public static float ComputeHitDamage( Tile tile, int baseDamage, int totalHits ) {
 			var mymod = DestructibleTilesMod.Instance;

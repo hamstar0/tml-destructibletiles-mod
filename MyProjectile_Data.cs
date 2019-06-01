@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using DestructibleTiles.Helpers.CollisionHelpers;
-using DestructibleTiles.Helpers.TileHelpers;
 using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.ProjectileHelpers;
-using HamstarHelpers.Services.Timers;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;

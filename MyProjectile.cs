@@ -18,26 +18,59 @@ namespace DestructibleTiles {
 
 		////////////////
 
+		public static bool CanHitTiles( Projectile projectile, out bool hasCooldown ) {
+			var mymod = DestructibleTilesMod.Instance;
+			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
+			string timerName = "PTH_" + projectile.whoAmI;
+			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
+
+			hasCooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown.ContainsKey( projName );
+
+			Timers.SetTimer( timerName, 2, () => false );
+
+			if( isConsecutive ) {
+				if( hasCooldown ) {
+					string repeatTimerName = timerName + "_repeat";
+					int cooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown[projName];
+
+					if( Timers.GetTimerTickDuration( repeatTimerName ) <= 0 ) {
+						Timers.SetTimer( repeatTimerName, cooldown, () => false );
+						isConsecutive = false;
+					}
+				}
+			}
+
+			return !isConsecutive;
+		}
+
+
+
+		////////////////
+
 		public override void AI( Projectile projectile ) {
-			if( projectile.aiStyle == 84 ) {
-				Vector2 projPos = projectile.Center + projectile.velocity * projectile.localAI[1];
-				Point? tilePosNull = TileFinderHelpers.GetNearestSolidTile( projPos, 32, false, false );
+			if( projectile.aiStyle == 84 ) {    // <- Beam weapons!
+				bool hasCooldown;
+
+				if( DestructibleTilesProjectile.CanHitTiles(projectile, out hasCooldown) || !hasCooldown ) {
+					Vector2 projPos = projectile.Center + projectile.velocity * projectile.localAI[1];
+					Point? tilePosNull = TileFinderHelpers.GetNearestSolidTile( projPos, 32, false, false );
 
 //DebugHelpers.Print("proj_"+projectile.whoAmI,
 //	"ai: "+string.Join(", ", projectile.ai.Select(f=>f.ToString("N1")))+
 //	", localAi: "+string.Join(", ", projectile.localAI.Select(f=>f.ToString("N1"))),
 //20);
-				if( tilePosNull.HasValue ) {
-					var tilePos = tilePosNull.Value;
-					int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+					if( tilePosNull.HasValue ) {
+						var tilePos = tilePosNull.Value;
+						int damage = DestructibleTilesProjectile.ComputeBeamProjectileDamage( projectile );
 
-					if( DestructibleTilesProjectile.HitTile( damage, tilePos.X, tilePos.Y, 1 ) ) {
-						bool _;
-						projectile.localAI[1] = CollisionHelpers.MeasureWorldDistanceToTile( projectile.Center, projectile.velocity, 2400f, out _ );
-					}
+						if( DestructibleTilesProjectile.HitTile( damage, tilePos.X, tilePos.Y, 1 ) ) {
+							bool _;
+							projectile.localAI[1] = CollisionHelpers.MeasureWorldDistanceToTile( projectile.Center, projectile.velocity, 2400f, out _ );
+						}
 //var pos1 = tilePos.ToVector2() * 16f;
 //var pos2 = new Vector2( pos1.X + 16, pos1.Y + 16 );
 //Dust.QuickBox( pos1, pos2, 0, Color.Red, d => { } );
+					}
 				}
 			}
 		}
@@ -72,28 +105,13 @@ namespace DestructibleTiles {
 			var mymod = DestructibleTilesMod.Instance;
 			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
 
+			// Explosives are handled elsewhere
 			if( mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName ) ) {
 				return base.OnTileCollide( projectile, oldVelocity );
 			}
 
-			string timerName = "PTH_" + projectile.whoAmI;
-			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
-
-			Timers.SetTimer( timerName, 2, () => false );
-
-			if( isConsecutive ) {
-				if( mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown.ContainsKey( projName ) ) {
-					string repeatTimerName = timerName + "_repeat";
-					int cooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown[projName];
-
-					if( Timers.GetTimerTickDuration(repeatTimerName) <= 0 ) {
-						Timers.SetTimer( repeatTimerName, cooldown, () => false );
-						isConsecutive = false;
-					}
-				}
-			}
-
-			if( !isConsecutive ) {
+			bool _;
+			if( DestructibleTilesProjectile.CanHitTiles(projectile, out _) ) {
 				var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
 				rect.X += (int)oldVelocity.X;
 				rect.Y += (int)oldVelocity.Y;
