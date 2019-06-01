@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using DestructibleTiles.Helpers.CollisionHelpers;
 using DestructibleTiles.Helpers.TileHelpers;
 using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.ProjectileHelpers;
@@ -59,20 +61,24 @@ namespace DestructibleTiles {
 
 		public override bool PreAI( Projectile projectile ) {
 			if( projectile.aiStyle == 84 ) {
-				var pos = projectile.Center + projectile.velocity * projectile.localAI[1];
-				Point? tilePosNull = TileFinderHelpers.GetNearestSolidTile( pos, 32, false, false );
+				Vector2 projPos = projectile.Center + projectile.velocity * projectile.localAI[1];
+				Point? tilePosNull = TileFinderHelpers.GetNearestSolidTile( projPos, 32, false, false );
 
+//DebugHelpers.Print("proj_"+projectile.whoAmI,
+//	"ai: "+string.Join(", ", projectile.ai.Select(f=>f.ToString("N1")))+
+//	", localAi: "+string.Join(", ", projectile.localAI.Select(f=>f.ToString("N1"))),
+//20);
 				if( tilePosNull.HasValue ) {
 					var tilePos = tilePosNull.Value;
+					int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
-					if( Vector2.DistanceSquared( tilePos.ToVector2() * 16f, pos ) <= 256f ) {
-						int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+					if( DestructibleTilesProjectile.HitTile( damage, tilePos.X, tilePos.Y, 1 ) ) {
+						projectile.localAI[1] = CollisionHelpers.MeasureWorldDistanceToTile( projectile.Center, projectile.velocity, 2400f );
 
-						DestructibleTilesProjectile.HitTile( damage, tilePos.X, tilePos.Y, 1 );
-//var pos1 = tilePos.Value.ToVector2() * 16f;
+					}
+//var pos1 = tilePos.ToVector2() * 16f;
 //var pos2 = new Vector2( pos1.X + 16, pos1.Y + 16 );
 //Dust.QuickBox( pos1, pos2, 0, Color.Red, d => { } );
-					}
 				}
 			}
 
