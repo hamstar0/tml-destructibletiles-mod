@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DestructibleTiles.Helpers.TileHelpers;
 using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.ProjectileHelpers;
 using HamstarHelpers.Services.Timers;
@@ -42,16 +43,41 @@ namespace DestructibleTiles {
 						string projName = ProjectileIdentityHelpers.GetProperUniqueId( i );
 						projectiles[projName] = Tuple.Create( radius, damage );
 					}
-
-					Main.projectile[proj.whoAmI] = new Projectile();
 				} catch {
 					continue;
 				}
 			}
 
+			Main.projectile[0] = new Projectile();
+
 			return projectiles;
 		}
 
+
+
+		////////////////
+
+		public override bool PreAI( Projectile projectile ) {
+			if( projectile.aiStyle == 84 ) {
+				var pos = projectile.Center + projectile.velocity * projectile.localAI[1];
+				Point? tilePosNull = TileFinderHelpers.GetNearestSolidTile( pos, 32, false, false );
+
+				if( tilePosNull.HasValue ) {
+					var tilePos = tilePosNull.Value;
+
+					if( Vector2.DistanceSquared( tilePos.ToVector2() * 16f, pos ) <= 256f ) {
+						int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+
+						DestructibleTilesProjectile.HitTile( damage, tilePos.X, tilePos.Y, 1 );
+//var pos1 = tilePos.Value.ToVector2() * 16f;
+//var pos2 = new Vector2( pos1.X + 16, pos1.Y + 16 );
+//Dust.QuickBox( pos1, pos2, 0, Color.Red, d => { } );
+					}
+				}
+			}
+
+			return base.PreAI( projectile );
+		}
 
 
 		////////////////
@@ -66,11 +92,11 @@ namespace DestructibleTiles {
 			if( isExplosive ) {
 				int tileX = (int)projectile.position.X >> 4;
 				int tileY = (int)projectile.position.Y >> 4;
-				int radius = mymod.Config.ProjectilesAsExplosivesAndRadius[ projName ];
+				int radius = mymod.Config.ProjectilesAsExplosivesAndRadius[projName];
 				int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
 				if( mymod.Config.DebugModeInfo ) {
-					Main.NewText( "RADIUS - " + projectile.Name + "("+projName+"), radius:" + radius + ", damage:"+damage );
+					Main.NewText( "RADIUS - " + projectile.Name + "(" + projName + "), radius:" + radius + ", damage:" + damage );
 				}
 
 				DestructibleTilesProjectile.HitTilesInRadius( tileX, tileY, radius, damage );
@@ -84,14 +110,15 @@ namespace DestructibleTiles {
 
 			//float avg = (projectile.width + projectile.height) / 2;
 			//bool isOblong = Math.Abs( 1 - (projectile.width / avg) ) > 0.2f;
-			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
-			bool isExplosive = mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName );
-
+			
 			string timerName = "PTH_" + projectile.whoAmI;
 			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
 			Timers.SetTimer( timerName, 2, () => false );
 
 			if( !isConsecutive ) {
+				string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
+				bool isExplosive = mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName );
+
 				if( !isExplosive ) {
 					var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
 					rect.X += (int)oldVelocity.X;
