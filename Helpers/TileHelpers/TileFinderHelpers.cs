@@ -52,12 +52,16 @@ namespace DestructibleTiles.Helpers.TileHelpers {
 				radMin *= radMin;
 				radMax *= radMax;
 
-				for( double inX = -radius; inX < radius; inX+=16 ) {
-					for( double inY = -radius; inY < radius; inY += 16 ) {
-						double dist = (inX * inX) + (inY * inY);
-						if( dist < radMin || dist > radMax ) {
+				for( double inX = -radius; inX <= radius; inX+=16 ) {
+					for( double inY = -radius; inY <= radius; inY += 16 ) {
+						double distSqr = (inX * inX) + (inY * inY);
+						if( distSqr < radMin || distSqr > radMax ) {
 							continue;
 						}
+						//double dist = Math.Sqrt( ( inX * inX ) + ( inY * inY ) );
+						//if( dist < radMin || dist > radMax ) {
+						//	continue;
+						//}
 
 						tileX = (midX + (int)inX) >> 4;
 						if( tileX < 0 || tileX >= (Main.maxTilesX - 1) ) {
