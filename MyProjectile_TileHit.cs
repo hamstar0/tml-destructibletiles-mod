@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.TileHelpers;
 using Microsoft.Xna.Framework;
@@ -43,21 +42,6 @@ namespace DestructibleTiles {
 		
 		////////////////
 		
-		public static void HitTilesInSet( int damage, IDictionary<int, int> hits ) {
-			var mymod = DestructibleTilesMod.Instance;
-			/*IOrderedEnumerable<KeyValuePair<int, int>> orderedHits;
-
-			orderedHits = hits.OrderBy( ( kv ) => {
-				var pos = new Vector2( kv.Key, kv.Value );
-				return Vector2.DistanceSquared( pos, projectile.Center );
-			} );*/
-
-			foreach( var xy in hits ) {
-				DestructibleTilesProjectile.HitTile( damage, xy.Key, xy.Value, hits.Count );
-			}
-		}
-
-
 		public static void HitTilesInRadius( int tileX, int tileY, int radius, int damage ) {
 			int radiusTiles = (int)Math.Round( (double)(radius / 16) );
 			int radiusTilesSquared = radiusTiles * radiusTiles;
@@ -68,7 +52,12 @@ namespace DestructibleTiles {
 			int bottom = tileY + (radiusTiles + 1);
 
 			for( int i=left; i<right; i++ ) {
+				if( i < 0 || i >= Main.maxTilesX - 1 ) { continue; }
+
 				for( int j=top; j<bottom; j++ ) {
+					if( j < 0 || j >= Main.maxTilesY - 1 ) { continue; }
+					if( TileHelpers.IsAir(Main.tile[i, j]) ) { continue; }
+
 					int xOff = i - tileX;
 					int yOff = j - tileY;
 

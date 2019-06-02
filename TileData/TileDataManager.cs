@@ -77,15 +77,25 @@ namespace DestructibleTiles.MultiHitTile {
 
 		public int AddDamage( int x, int y, int damage ) {
 			if( damage == 0 ) {
-				return 0;
+				return -1;
 			}
 
+			bool isValid = TileDataManager.IsValidTile( x, y );
 			TileData data;
 
 			data = this.Data.Get2DOrDefault( x, y );
 			if( data == null ) {
+				if( !isValid ) {
+					return -1;
+				}
+
 				data = new TileData();
 				this.Data.Set2D( x, y, data );
+			} else {
+				if( !isValid ) {
+					this.Data[ x ].Remove( y );
+					return -1;
+				}
 			}
 
 			data.Damage += damage;
