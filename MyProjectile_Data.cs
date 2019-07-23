@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.ProjectileHelpers;
+using HamstarHelpers.Helpers.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -11,10 +10,18 @@ namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static IDictionary<string, Tuple<int, int>> GetExplosives() {
 			var projectiles = new Dictionary<string, Tuple<int, int>>();
+			int inactivePos = 0;
+
+			for( int i = 0; i < Main.projectile.Length; i++ ) {
+				if( Main.projectile[i] == null || !Main.projectile[i].active ) {
+					inactivePos = i;
+					break;
+				}
+			}
 
 			for( int i = 0; i < Main.projectileTexture.Length; i++ ) {
 				var proj = new Projectile();
-				Main.projectile[0] = proj;
+				Main.projectile[inactivePos] = proj;
 
 				try {
 					proj.SetDefaults( i );
@@ -32,7 +39,7 @@ namespace DestructibleTiles {
 						int radius = ( proj.width + proj.height ) / 4;
 						damage = damage > proj.damage ? damage : proj.damage;
 						
-						string projName = ProjectileIdentityHelpers.GetProperUniqueId( i );
+						string projName = ProjectileIdentityHelpers.GetUniqueKey( i );
 						projectiles[projName] = Tuple.Create( radius, damage );
 					}
 				} catch {
@@ -40,7 +47,7 @@ namespace DestructibleTiles {
 				}
 			}
 
-			Main.projectile[0] = new Projectile();
+			Main.projectile[inactivePos] = new Projectile();
 
 			return projectiles;
 		}

@@ -1,4 +1,6 @@
-﻿using HamstarHelpers.Helpers.ProjectileHelpers;
+﻿using HamstarHelpers.Helpers.Projectiles;
+using HamstarHelpers.Helpers.TileHelpers;
+using HamstarHelpers.Helpers.Tiles;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -8,7 +10,7 @@ namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static int ComputeProjectileDamage( Projectile projectile ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
+			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
 
 			if( mymod.Config.ProjectileTileDamageOverrides.ContainsKey( projName ) ) {
 				return mymod.Config.ProjectileTileDamageOverrides[projName];
@@ -39,7 +41,7 @@ namespace DestructibleTiles {
 			var mymod = DestructibleTilesMod.Instance;
 			float dmg = (float)baseDamage / (float)totalHits;
 			float scale = 1f;
-			string tileName = Helpers.TileHelpers.TileIdentityHelpers.GetProperUniqueId( tile );
+			string tileName = TileIdentityHelpers.GetUniqueKey( tile.type );
 
 			float armor = mymod.Config.TileArmor.ContainsKey(tileName) ? mymod.Config.TileArmor[ tileName ] : 0f;
 			if( armor >= dmg ) {
@@ -52,7 +54,7 @@ namespace DestructibleTiles {
 
 			if( mymod.Config.UseVanillaTileDamageScalesUnlessOverridden ) {
 				bool isAbsolute;
-				scale *= Helpers.TileHelpers.TileHelpers.GetDamageScale( tile, dmg, out isAbsolute );
+				scale *= TileHelpers.GetDamageScale( tile, dmg, out isAbsolute );
 
 				if( isAbsolute ) {
 					return 100f;	// max

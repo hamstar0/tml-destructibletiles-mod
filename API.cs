@@ -1,21 +1,10 @@
 ﻿using DestructibleTiles.MultiHitTile;
-using HamstarHelpers.Components.DataStructures;
+using HamstarHelpers.Helpers.DotNET.Extensions;
 using Terraria;
 
 
 namespace DestructibleTiles {
 	public static partial class DestructibleTilesAPI {
-		public static DestructibleTilesConfigData GetModSettings() {
-			return DestructibleTilesMod.Instance.Config;
-		}
-
-		public static void SaveModSettingsChanges() {
-			DestructibleTilesMod.Instance.ConfigJson.SaveFile();
-		}
-
-
-		////////////////
-
 		public static float ComputeDamage( int tileX, int tileY, int damage, int totalHits ) {
 			if( !TileDataManager.IsValidTile( tileX, tileY ) ) {
 				return 0f;

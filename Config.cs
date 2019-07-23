@@ -1,20 +1,11 @@
-﻿using HamstarHelpers.Components.Config;
-using HamstarHelpers.Helpers.DebugHelpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Terraria.ID;
+using Terraria.ModLoader.Config;
 
 
 namespace DestructibleTiles {
-	public class DestructibleTilesConfigData : ConfigurationDataBase {
-		public readonly static string ConfigFileName = "Destructible Tiles Config.json";
-
-
-
-		////////////////
-
-		public string VersionSinceUpdate = "";
-
+	public class DestructibleTilesConfig : ModConfig {
 		public bool DebugModeInfo = false;
 
 		public bool AutoLoadDefaultExplosiveProjectiles = true;
@@ -37,20 +28,19 @@ namespace DestructibleTiles {
 		public float BeamDamageScale = 1f / 30f;
 
 
-		////
 
-		public string _OLD_SETTINGS_BELOW_ = "";
+		////////////////
 
-		public IDictionary<string, int[]> ProjectilesAsExplosivesAndRadiusAndDamage = new Dictionary<string, int[]>();
+		public override ConfigScope Mode => throw new NotImplementedException();
 
 
 
 		////////////////
 
-		public DestructibleTilesConfigData() {
-		}
+		//[OnDeserialized]
+		//internal void OnDeserializedMethod( StreamingContext context ) {
 
-		public void SetDefaults() {
+		public override void OnLoaded() {
 			this.ProjectileTileDamageDefaults.Clear();
 			this.ProjectileTileDamageOverrides.Clear();
 			this.ProjectilesAsExplosivesAndRadius.Clear();
@@ -86,6 +76,8 @@ namespace DestructibleTiles {
 			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire] = 45;
 			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire2] = 45;
 			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire3] = 45;
+
+			this.TileArmor["Terraria."+TileID.LihzahrdBrick] = 150;
 		}
 
 		public void SetProjectileDefaults() {
@@ -105,37 +97,6 @@ namespace DestructibleTiles {
 					this.ProjectileTileDamageDefaults[projName] = damage;
 				}
 			}
-		}
-
-		public override void OnLoad( bool success ) {
-			if( !success ) {
-				this.SetDefaults();
-			}
-		}
-
-
-		////////////////
-
-		public bool UpdateToLatestVersion() {
-			var mymod = DestructibleTilesMod.Instance;
-			var newConfig = new DestructibleTilesConfigData();
-			newConfig.SetDefaults();
-
-			var versSince = this.VersionSinceUpdate != "" ?
-				new Version( this.VersionSinceUpdate ) :
-				new Version();
-
-			if( versSince >= mymod.Version ) {
-				return false;
-			}
-
-			if( this.VersionSinceUpdate == "" ) {
-				this.SetDefaults();
-			}
-
-			this.VersionSinceUpdate = mymod.Version.ToString();
-
-			return true;
 		}
 	}
 }

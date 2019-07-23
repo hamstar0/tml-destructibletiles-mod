@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using DestructibleTiles.Helpers.CollisionHelpers;
-using DestructibleTiles.Helpers.TileHelpers;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.ProjectileHelpers;
+using HamstarHelpers.Helpers.Tiles;
+using HamstarHelpers.Helpers.Projectiles;
 using HamstarHelpers.Services.Timers;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-
+using HamstarHelpers.Helpers.Collisions;
 
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
@@ -21,7 +18,7 @@ namespace DestructibleTiles {
 
 		public static bool CanHitTiles( Projectile projectile, out bool hasCooldown ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
+			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
 			string timerName = "PTH_" + projectile.whoAmI;
 			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
 
@@ -54,7 +51,7 @@ namespace DestructibleTiles {
 
 				if( DestructibleTilesProjectile.CanHitTiles(projectile, out hasCooldown) || !hasCooldown ) {
 					Vector2 projPos = projectile.Center + (projectile.velocity * projectile.localAI[1]);
-					Point? tilePosNull = TileFinderHelpers.GetNearestSolidTile( projPos, 32, false, false );
+					Point? tilePosNull = TileFinderHelpers.GetNearestTile( projPos, TilePattern.CommonSolid, 32 );
 
 //DebugHelpers.Print("proj_"+projectile.whoAmI,
 //	"vel: "+projectile.velocity.X.ToString("N2")+":"+projectile.velocity.Y.ToString("N2")+
@@ -70,7 +67,7 @@ namespace DestructibleTiles {
 
 						if( DestructibleTilesProjectile.HitTile(damage, tilePos.X, tilePos.Y, 1) ) {
 							bool _;
-							projectile.localAI[1] = CollisionHelpers.MeasureWorldDistanceToTile( projectile.Center, projectile.velocity, 2400f, out _ );
+							projectile.localAI[1] = TileCollisionHelpers.MeasureWorldDistanceToTile( projectile.Center, projectile.velocity, 2400f, out _ );
 						}
 //var pos1 = tilePos.ToVector2() * 16f;
 //var pos2 = new Vector2( pos1.X + 16, pos1.Y + 16 );
@@ -87,7 +84,7 @@ namespace DestructibleTiles {
 			if( timeLeft > 3 ) { return; }
 
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
+			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
 			bool isExplosive = mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName );
 
 			if( isExplosive ) {
@@ -108,7 +105,7 @@ namespace DestructibleTiles {
 
 		public override bool OnTileCollide( Projectile projectile, Vector2 oldVelocity ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetProperUniqueId( projectile.type );
+			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
 
 			// Explosives are handled elsewhere
 			if( mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName ) ) {
@@ -122,14 +119,16 @@ namespace DestructibleTiles {
 				rect.Y += (int)oldVelocity.Y;
 
 				bool onlySometimesRespects;
-				bool respectsPlatforms = Helpers.ProjectileHelpers.ProjectileHelpers.VanillaProjectileRespectsPlatforms( projectile, out onlySometimesRespects )
+				bool respectsPlatforms = ProjectileAttributeHelpers.DoesVanillaProjectileHitPlatforms( projectile, out onlySometimesRespects )
 					&& !onlySometimesRespects;
 
 				int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
-				IDictionary<int, int> hits = Helpers.TileHelpers.TileFinderHelpers.GetSolidTilesInWorldRectangle( rect, respectsPlatforms, false );
+				TilePattern tilePattern = new TilePattern( true, respectsPlatforms, false, null, null, null );
+				IDictionary<int, int> hits = TileFinderHelpers.GetTilesInWorldRectangle( rect, tilePattern );
+
 				if( hits.Count == 0 ) {
-					Point? point = TileFinderHelpers.GetNearestSolidTile( projectile.Center, 32, respectsPlatforms, false );
+					Point? point = TileFinderHelpers.GetNearestTile( projectile.Center, tilePattern, 32 );
 					if( point.HasValue ) {
 						hits[ point.Value.X ] = point.Value.Y;
 					}

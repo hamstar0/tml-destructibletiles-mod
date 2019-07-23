@@ -1,7 +1,5 @@
 using DestructibleTiles.MultiHitTile;
-using HamstarHelpers.Components.Config;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
+using HamstarHelpers.Helpers.TModLoader.Mods;
 using Terraria.ModLoader;
 
 
@@ -13,8 +11,7 @@ namespace DestructibleTiles {
 
 		////////////////
 
-		public JsonConfig<DestructibleTilesConfigData> ConfigJson { get; private set; }
-		public DestructibleTilesConfigData Config => this.ConfigJson.Data;
+		public DestructibleTilesConfig Config { get; private set; }
 
 		public TileDataManager TileDataMngr;
 
@@ -23,11 +20,7 @@ namespace DestructibleTiles {
 		////////////////
 
 		public DestructibleTilesMod() {
-			this.ConfigJson = new JsonConfig<DestructibleTilesConfigData>(
-				DestructibleTilesConfigData.ConfigFileName,
-				ConfigurationDataBase.RelativePath,
-				new DestructibleTilesConfigData()
-			);
+			this.Config = new DestructibleTilesConfig();
 		}
 
 		////////////////
@@ -35,22 +28,7 @@ namespace DestructibleTiles {
 		public override void Load() {
 			DestructibleTilesMod.Instance = this;
 
-			this.LoadConfig();
-
 			this.TileDataMngr = new TileDataManager();
-		}
-
-		private void LoadConfig() {
-			if( !this.ConfigJson.LoadFile() ) {
-				this.Config.SetDefaults();
-				this.ConfigJson.SaveFile();
-				ErrorLogger.Log( "Destructible Tiles config " + this.Version.ToString() + " created." );
-			}
-
-			if( this.Config.UpdateToLatestVersion() ) {
-				ErrorLogger.Log( "Destructible Tiles updated to " + this.Version.ToString() );
-				this.ConfigJson.SaveFile();
-			}
 		}
 
 		public override void Unload() {

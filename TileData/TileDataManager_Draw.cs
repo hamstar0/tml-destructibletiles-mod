@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Helpers.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -33,7 +33,7 @@ namespace DestructibleTiles.MultiHitTile {
 				data.AnimationTimeDuration--;
 			}
 
-			if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir(tile) ) { return false; }
+			if( TileHelpers.IsAir(tile) ) { return false; }
 			if( !TileDataManager.IsValidTile(tileX, tileY) ) { return false; }
 			if( tile.slope() > 0 ) { return false; }
 			if( tile.halfBrick() ) { return false; }

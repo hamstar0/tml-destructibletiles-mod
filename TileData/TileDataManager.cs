@@ -1,4 +1,6 @@
 ﻿using HamstarHelpers.Components.DataStructures;
+using HamstarHelpers.Helpers.DotNET.Extensions;
+using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Services.Timers;
 using System;
 using System.Collections.Concurrent;
@@ -25,7 +27,7 @@ namespace DestructibleTiles.MultiHitTile {
 			if( !WorldGen.InWorld( tileX, tileY, 0 ) ) { return false; }
 			Tile tile = Main.tile[tileX, tileY];
 
-			if( HamstarHelpers.Helpers.TileHelpers.TileHelpers.IsAir(tile) ) { return false; }
+			if( TileHelpers.IsAir(tile) ) { return false; }
 			if( !tile.active() ) { return false; }
 			if( !Main.tileSolid[(int)tile.type] ) { return false; }
 			if( Main.tileSolidTop[(int)tile.type] ) { return false; }
