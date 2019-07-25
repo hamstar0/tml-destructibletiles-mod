@@ -12,16 +12,16 @@ namespace DestructibleTiles {
 			var mymod = DestructibleTilesMod.Instance;
 			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
 
-			if( mymod.Config.ProjectileTileDamageOverrides.ContainsKey( projName ) ) {
-				return mymod.Config.ProjectileTileDamageOverrides[projName];
+			if( mymod.Config.ProjectileDamageOverrides.ContainsKey( projName ) ) {
+				return mymod.Config.ProjectileDamageOverrides[projName];
 			}
 
 			if( projectile.damage > 0 ) {
 				return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );
 			}
 
-			if( mymod.Config.ProjectileTileDamageDefaults.ContainsKey( projName ) ) {
-				return (int)( (float)mymod.Config.ProjectileTileDamageDefaults[projName] * mymod.Config.AllDamagesScale );
+			if( mymod.Config.ProjectileDamageDefaults.ContainsKey( projName ) ) {
+				return (int)( (float)mymod.Config.ProjectileDamageDefaults[projName] * mymod.Config.AllDamagesScale );
 			}
 
 			return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );

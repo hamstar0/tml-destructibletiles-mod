@@ -11,7 +11,7 @@ namespace DestructibleTiles {
 
 		////////////////
 
-		public DestructibleTilesConfig Config { get; private set; }
+		public DestructibleTilesConfig Config => this.GetConfig<DestructibleTilesConfig>();
 
 		public TileDataManager TileDataMngr;
 
@@ -20,7 +20,6 @@ namespace DestructibleTiles {
 		////////////////
 
 		public DestructibleTilesMod() {
-			this.Config = new DestructibleTilesConfig();
 		}
 
 		////////////////

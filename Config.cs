@@ -1,87 +1,127 @@
 ﻿using System;
 using System.Collections.Generic;
-using Terraria.ID;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.Serialization;
 using Terraria.ModLoader.Config;
 
 
 namespace DestructibleTiles {
 	public class DestructibleTilesConfig : ModConfig {
+		[Label("Debug Mode")]
+		[Tooltip("Logs or displays developer-relevant information.")]
 		public bool DebugModeInfo = false;
 
+		[Label("Auto-load explosive projectils into config")]
+		[Tooltip("Auto-adds all explosive projectiles into the below projectile lists.")]
+		[DefaultValue(true)]
 		public bool AutoLoadDefaultExplosiveProjectiles = true;
 
+		[Label("Destroyed tiles drop block items")]
 		public bool DestroyedTilesDropItems = false;
 		
+		[Label("Use vanilla tile damage scaling (unless overridden)")]
+		[DefaultValue(true)]
 		public bool UseVanillaTileDamageScalesUnlessOverridden = true;
 
+		[Label("Damage multiplier for all projectiles")]
+		[DefaultValue(1f)]
 		public float AllDamagesScale = 1f;
 
-		public IDictionary<string, int>		ProjectileTileDamageDefaults = new Dictionary<string, int>();
-		public IDictionary<string, int>		ProjectileTileDamageOverrides = new Dictionary<string, int>();
+		[Label( "Projectile damage to tiles (accepts scaling)" )]
+		public IDictionary<string, int>		ProjectileDamageDefaults = new Dictionary<string, int>();
+		[Label( "Projectile damage to tiles (overrides all)" )]
+		public IDictionary<string, int>		ProjectileDamageOverrides = new Dictionary<string, int>();
+		[Label( "Explosive projectives with their radiuses" )]
 		public IDictionary<string, int>		ProjectilesAsExplosivesAndRadius = new Dictionary<string, int>();
+		[Label( "Consecutive-hitting projectiles with their cooldowns" )]
 		public IDictionary<string, int>		ProjectilesAsConsecutiveHittingAndCooldown = new Dictionary<string, int>();
 		//public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
 
+		[Label( "Tile damage multiplier" )]
 		public IDictionary<string, float>	TileDamageScaleOverrides = new Dictionary<string, float>();
-		public IDictionary<string, float> TileArmor = new Dictionary<string, float>();
+		[Label( "Tile armor" )]
+		public IDictionary<string, float>	TileArmor = new Dictionary<string, float>();
 
+		[Label( "Beam damage scale" )]
+		[DefaultValue( 1f / 30f )]
 		public float BeamDamageScale = 1f / 30f;
 
 
 
 		////////////////
 
-		public override ConfigScope Mode => throw new NotImplementedException();
+		public override ConfigScope Mode => ConfigScope.ServerSide;
 
 
 
 		////////////////
 
-		//[OnDeserialized]
-		//internal void OnDeserializedMethod( StreamingContext context ) {
+		public override ModConfig Clone() {
+			var clone = (DestructibleTilesConfig)base.Clone();
 
-		public override void OnLoaded() {
-			this.ProjectileTileDamageDefaults.Clear();
-			this.ProjectileTileDamageOverrides.Clear();
-			this.ProjectilesAsExplosivesAndRadius.Clear();
-			//this.ProjectilesAsConsecutiveHittingAndCooldown.Clear();
-			//this.ProjectilesAsPhysicsObjectsAndMaxVelocity.Clear();
-			this.TileDamageScaleOverrides.Clear();
-			this.TileArmor.Clear();
+			clone.ProjectileDamageDefaults = this.ProjectileDamageDefaults?.ToDictionary( kv=>kv.Key, kv=>kv.Value );
+			clone.ProjectileDamageOverrides = this.ProjectileDamageOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.ProjectilesAsExplosivesAndRadius = this.ProjectilesAsExplosivesAndRadius?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.ProjectilesAsConsecutiveHittingAndCooldown = this.ProjectilesAsConsecutiveHittingAndCooldown?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.TileDamageScaleOverrides = this.TileDamageScaleOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.TileArmor = this.TileArmor?.ToDictionary( kv => kv.Key, kv => kv.Value );
 
-			this.TileDamageScaleOverrides["Terraria." + TileID.MartianConduitPlating] = 0.1f;
+			return clone;
+		}
 
-			this.ProjectileTileDamageDefaults["Terraria.30"] = 60;		//Grenade
-			this.ProjectileTileDamageDefaults["Terraria.108"] = 500;    //Explosives
-			this.ProjectileTileDamageDefaults["Terraria.133"] = 40;     //Grenade I
-			this.ProjectileTileDamageDefaults["Terraria.134"] = 40;     //Rocket I
-			this.ProjectileTileDamageDefaults["Terraria.135"] = 40;     //Proximity Mine I
-			this.ProjectileTileDamageDefaults["Terraria.136"] = 40;     //Grenade II
-			this.ProjectileTileDamageDefaults["Terraria.137"] = 40;     //Rocket II
-			this.ProjectileTileDamageDefaults["Terraria.138"] = 40;     //Proximity Mine II
-			this.ProjectileTileDamageDefaults["Terraria.139"] = 65;     //Grenade III
-			this.ProjectileTileDamageDefaults["Terraria.140"] = 65;     //Rocket III
-			this.ProjectileTileDamageDefaults["Terraria.141"] = 65;     //Proximity Mine III
-			this.ProjectileTileDamageDefaults["Terraria.142"] = 65;     //Grenade IV
-			this.ProjectileTileDamageDefaults["Terraria.143"] = 65;     //Rocket IV
-			this.ProjectileTileDamageDefaults["Terraria.164"] = 250;    //Land Mine
-			this.ProjectileTileDamageDefaults["Terraria.338"] = 40;     //Rocket (I; snowman)
-			this.ProjectileTileDamageDefaults["Terraria.339"] = 40;     //Rocket (II; snowman)
-			this.ProjectileTileDamageDefaults["Terraria.340"] = 40;     //Rocket (III; snowman)
-			this.ProjectileTileDamageDefaults["Terraria.341"] = 40;     //Rocket (IV; snowman)
-			this.ProjectileTileDamageDefaults["Terraria.397"] = 60;     //Sticky Grenade
-			this.ProjectileTileDamageDefaults["Terraria.517"] = 65;     //Bouncy Grenade
-			this.ProjectileTileDamageDefaults["Terraria.588"] = 30;		//Happy Grenade
+		[OnDeserialized]
+		internal void OnDeserializedMethod( StreamingContext context ) {
+			this.ProjectileDamageDefaults = this.ProjectileDamageDefaults
+				?? new Dictionary<string, int>();
+			this.ProjectileDamageOverrides = this.ProjectileDamageOverrides
+				?? new Dictionary<string, int>();
+			this.ProjectilesAsExplosivesAndRadius = this.ProjectilesAsExplosivesAndRadius
+				?? new Dictionary<string, int>();
+			this.ProjectilesAsConsecutiveHittingAndCooldown = this.ProjectilesAsConsecutiveHittingAndCooldown
+				?? new Dictionary<string, int>();
+			this.TileDamageScaleOverrides = this.TileDamageScaleOverrides
+				?? new Dictionary<string, float>();
+			this.TileArmor = this.TileArmor
+				?? new Dictionary<string, float>();
 
-			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire] = 45;
-			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire2] = 45;
-			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria."+ProjectileID.MolotovFire3] = 45;
+			this.TileDamageScaleOverrides["Terraria MartianConduitPlating"] = 0.1f;
 
-			this.TileArmor["Terraria."+TileID.LihzahrdBrick] = 150;
+			this.ProjectileDamageDefaults["Terraria Grenade"] = 60;		//Grenade
+			this.ProjectileDamageDefaults["Terraria Explosives"] = 500;    //Explosives
+			this.ProjectileDamageDefaults["Terraria GrenadeI"] = 40;     //Grenade I
+			this.ProjectileDamageDefaults["Terraria RocketI"] = 40;     //Rocket I
+			this.ProjectileDamageDefaults["Terraria ProximityMineI"] = 40;     //Proximity Mine I
+			this.ProjectileDamageDefaults["Terraria GrenadeII"] = 40;     //Grenade II
+			this.ProjectileDamageDefaults["Terraria RocketII"] = 40;     //Rocket II
+			this.ProjectileDamageDefaults["Terraria ProximityMineII"] = 40;     //Proximity Mine II
+			this.ProjectileDamageDefaults["Terraria GrenadeIII"] = 65;     //Grenade III
+			this.ProjectileDamageDefaults["Terraria RocketIII"] = 65;     //Rocket III
+			this.ProjectileDamageDefaults["Terraria ProximityMineIII"] = 65;     //Proximity Mine III
+			this.ProjectileDamageDefaults["Terraria GrenadeIV"] = 65;     //Grenade IV
+			this.ProjectileDamageDefaults["Terraria RocketIV"] = 65;     //Rocket IV
+			this.ProjectileDamageDefaults["Terraria ProximityMineIV"] = 65;     //Rocket IV
+			this.ProjectileDamageDefaults["Terraria Landmine"] = 250;    //Land Mine
+			this.ProjectileDamageDefaults["Terraria RocketSnowmanI"] = 40;     //Rocket (I; snowman)
+			this.ProjectileDamageDefaults["Terraria RocketSnowmanII"] = 40;     //Rocket (II; snowman)
+			this.ProjectileDamageDefaults["Terraria RocketSnowmanIII"] = 40;     //Rocket (III; snowman)
+			this.ProjectileDamageDefaults["Terraria RocketSnowmanIV"] = 40;     //Rocket (IV; snowman)
+			this.ProjectileDamageDefaults["Terraria StickyGrenade"] = 60;     //Sticky Grenade
+			this.ProjectileDamageDefaults["Terraria BouncyGrenade"] = 65;     //Bouncy Grenade
+			this.ProjectileDamageDefaults["Terraria PartyGirlGrenade"] = 30;		//Happy Grenade
+
+			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire"] = 45;
+			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire2"] = 45;
+			this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire3"] = 45;
+
+			this.TileArmor["Terraria LihzahrdBrick"] = 150;
 		}
 
 		public void SetProjectileDefaults() {
-			if( !this.AutoLoadDefaultExplosiveProjectiles ) { return; }
+			if( !this.AutoLoadDefaultExplosiveProjectiles ) {
+				return;
+			}
+			this.AutoLoadDefaultExplosiveProjectiles = false;
 
 			IDictionary<string, Tuple<int, int>> explosiveProjs = DestructibleTilesProjectile.GetExplosives();
 
@@ -90,11 +130,11 @@ namespace DestructibleTiles {
 				int radius = kv.Value.Item1;
 				int damage = kv.Value.Item2;
 
-				if( !this.ProjectilesAsExplosivesAndRadius.ContainsKey(projName) ) {
+				if( !this.ProjectilesAsExplosivesAndRadius.ContainsKey( projName ) ) {
 					this.ProjectilesAsExplosivesAndRadius[projName] = radius;
 				}
-				if( !this.ProjectileTileDamageDefaults.ContainsKey( projName ) ) {
-					this.ProjectileTileDamageDefaults[projName] = damage;
+				if( !this.ProjectileDamageDefaults.ContainsKey( projName ) ) {
+					this.ProjectileDamageDefaults[projName] = damage;
 				}
 			}
 		}
