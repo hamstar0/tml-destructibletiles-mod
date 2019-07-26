@@ -13,7 +13,15 @@ namespace DestructibleTiles {
 			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
 
 			if( mymod.Config.ProjectileDamageOverrides.ContainsKey( projName ) ) {
-				return mymod.Config.ProjectileDamageOverrides[projName];
+				ProjectileStateDefinition projDmgOver = mymod.Config.ProjectileDamageOverrides[projName];
+
+				if( projDmgOver.IsFriendlyFlag.HasValue && projectile.friendly == projDmgOver.IsFriendlyFlag.Value ) {
+					if( projDmgOver.IsHostileFlag.HasValue && projectile.hostile == projDmgOver.IsHostileFlag.Value ) {
+						if( projDmgOver.IsNPCFlag.HasValue && projectile.npcProj == projDmgOver.IsNPCFlag.Value ) {
+							return mymod.Config.ProjectileDamageOverrides[projName].Amount;
+						}
+					}
+				}
 			}
 
 			if( projectile.damage > 0 ) {
@@ -21,7 +29,15 @@ namespace DestructibleTiles {
 			}
 
 			if( mymod.Config.ProjectileDamageDefaults.ContainsKey( projName ) ) {
-				return (int)( (float)mymod.Config.ProjectileDamageDefaults[projName] * mymod.Config.AllDamagesScale );
+				ProjectileStateDefinition projDmgDef = mymod.Config.ProjectileDamageDefaults[projName];
+
+				if( projDmgDef.IsFriendlyFlag.HasValue && projectile.friendly == projDmgDef.IsFriendlyFlag.Value ) {
+					if( projDmgDef.IsHostileFlag.HasValue && projectile.hostile == projDmgDef.IsHostileFlag.Value ) {
+						if( projDmgDef.IsNPCFlag.HasValue && projectile.npcProj == projDmgDef.IsNPCFlag.Value ) {
+							return (int)((float)projDmgDef.Amount * mymod.Config.AllDamagesScale);
+						}
+					}
+				}
 			}
 
 			return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );
@@ -43,13 +59,15 @@ namespace DestructibleTiles {
 			float scale = 1f;
 			string tileName = TileIdentityHelpers.GetUniqueKey( tile.type );
 
-			float armor = mymod.Config.TileArmor.ContainsKey(tileName) ? mymod.Config.TileArmor[ tileName ] : 0f;
+			float armor = mymod.Config.TileArmor.ContainsKey(tileName)
+				? (float)mymod.Config.TileArmor[ tileName ].Amount : 0f;
+
 			if( armor >= dmg ) {
 				return 0;
 			}
 			
 			if( mymod.Config.TileDamageScaleOverrides.ContainsKey(tileName) ) {
-				scale = mymod.Config.TileDamageScaleOverrides[ tileName ];
+				scale = mymod.Config.TileDamageScaleOverrides[ tileName ].Amount;
 			}
 
 			if( mymod.Config.UseVanillaTileDamageScalesUnlessOverridden ) {

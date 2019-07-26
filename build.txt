@@ -1,5 +1,5 @@
 author = hamstar
-version = 1.1.1
+version = 1.2.0
 displayName = Destructible Tiles
 modReferences = HamstarHelpers@5.0.0
 buildIgnore = *.csproj, *.user, *.bat, obj\*, bin\*, .vs\*, .git\*
