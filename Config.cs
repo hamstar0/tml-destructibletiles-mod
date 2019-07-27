@@ -1,11 +1,10 @@
 ﻿using HamstarHelpers.Helpers.TModLoader.Configs;
-using Newtonsoft.Json;
+using Terraria.ModLoader.Config;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using Terraria.ModLoader.Config;
 
 
 namespace DestructibleTiles {
@@ -19,17 +18,13 @@ namespace DestructibleTiles {
 		[Label("Damage amount")]
 		public int Amount;
 
-		////
 
-		[JsonIgnore]
-		internal bool? IsHostileFlag => this.IsHostile == 0 ? (bool?)null :
-			this.IsHostile == 1 ? true : false;
-		[JsonIgnore]
-		internal bool? IsFriendlyFlag => this.IsFriendly == 0 ? (bool?)null :
-			this.IsFriendly == 1 ? true : false;
-		[JsonIgnore]
-		internal bool? IsNPCFlag => this.IsNPC == 0 ? (bool?)null :
-			this.IsNPC == 1 ? true : false;
+
+		////////////////
+
+		internal bool? IsHostileFlag => this.IsHostile == 0 ? (bool?)null : this.IsHostile == 1 ? true : false;
+		internal bool? IsFriendlyFlag => this.IsFriendly == 0 ? (bool?)null : this.IsFriendly == 1 ? true : false;
+		internal bool? IsNPCFlag => this.IsNPC == 0 ? (bool?)null : this.IsNPC == 1 ? true : false;
 
 
 
@@ -47,7 +42,7 @@ namespace DestructibleTiles {
 
 
 	public class DestructibleTilesConfig : ModConfig {
-		[JsonIgnore]
+		//[JsonIgnore]
 		private bool ApplyDefaults = false;
 
 
@@ -80,30 +75,30 @@ namespace DestructibleTiles {
 
 
 		[Label( "Projectile damage to tiles (accepts scaling)" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectileDamageDefaults
-			= new Dictionary<string, ProjectileStateDefinition>();
+		public IDictionary<string, ProjectileStateDefinition>	ProjectileDamageDefaults =
+			new Dictionary<string, ProjectileStateDefinition>();
 
 		[Label( "Projectile damage to tiles (overrides all)" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectileDamageOverrides
-			= new Dictionary<string, ProjectileStateDefinition>();
+		public IDictionary<string, ProjectileStateDefinition>	ProjectileDamageOverrides =
+			new Dictionary<string, ProjectileStateDefinition>();
 
 		[Label( "Explosive projectives with their radiuses" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectilesAsExplosivesAndRadius
-			= new Dictionary<string, ProjectileStateDefinition>();
+		public IDictionary<string, ProjectileStateDefinition>	ProjectilesAsExplosivesAndRadius =
+			new Dictionary<string, ProjectileStateDefinition>();
 
 		[Label( "Consecutive-hitting projectiles with their cooldowns" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectilesAsConsecutiveHittingAndCooldown
-			= new Dictionary<string, ProjectileStateDefinition>();
+		public IDictionary<string, ProjectileStateDefinition>	ProjectilesAsConsecutiveHittingAndCooldown =
+			new Dictionary<string, ProjectileStateDefinition>();
 		//public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
 
 
 		[Label( "Tile damage multiplier" )]
-		public IDictionary<string, PositiveSingleDefinition>	TileDamageScaleOverrides
-			= new Dictionary<string, PositiveSingleDefinition>();
+		public IDictionary<string, PositiveSingleDefinition>	TileDamageScaleOverrides =
+			new Dictionary<string, PositiveSingleDefinition>();
 
 		[Label( "Tile armor" )]
-		public IDictionary<string, PositiveIntDefinition>		TileArmor
-			= new Dictionary<string, PositiveIntDefinition>();
+		public IDictionary<string, PositiveIntDefinition>		TileArmor =
+			new Dictionary<string, PositiveIntDefinition>();
 
 
 		[Label( "Beam damage scale" )]

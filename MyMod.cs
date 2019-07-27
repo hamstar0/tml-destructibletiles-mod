@@ -20,13 +20,12 @@ namespace DestructibleTiles {
 		////////////////
 
 		public DestructibleTilesMod() {
+			DestructibleTilesMod.Instance = this;
 		}
 
 		////////////////
 
 		public override void Load() {
-			DestructibleTilesMod.Instance = this;
-
 			this.TileDataMngr = new TileDataManager();
 		}
 
