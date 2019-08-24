@@ -3,7 +3,6 @@ using HamstarHelpers.Helpers.ParticleFx;
 using HamstarHelpers.Helpers.Tiles;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 
@@ -24,12 +23,7 @@ namespace DestructibleTiles {
 			if( mymod.TileDataMngr.AddDamage( tileX, tileY, dmg ) >= 100 ) {//
 			//if( plrTileHits.AddDamage( tileHitId, dmg, true ) >= 100 ) {
 			//	plrTileHits.Clear( tileHitId );
-				WorldGen.KillTile( tileX, tileY, false, false, !mymod.Config.DestroyedTilesDropItems );
-				if( Main.netMode == 1 ) {
-					int itemDropMode = mymod.Config.DestroyedTilesDropItems ? 0 : 4;
-
-					NetMessage.SendData( MessageID.TileChange, -1, -1, null, itemDropMode, (float)tileX, (float)tileY, 0f, 0, 0, 0 );
-				}
+				TileHelpers.KillTile( tileX, tileY, false, mymod.Config.DestroyedTilesDropItems );
 
 				ParticleFxHelpers.MakeDustCloud(
 					new Vector2((tileX * 16) + 8, (tileY * 16) + 8),

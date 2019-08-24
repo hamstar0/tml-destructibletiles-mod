@@ -1,8 +1,7 @@
-﻿using HamstarHelpers.Helpers.Projectiles;
-using HamstarHelpers.Helpers.TileHelpers;
-using HamstarHelpers.Helpers.Tiles;
+﻿using HamstarHelpers.Helpers.Tiles;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 
@@ -10,7 +9,7 @@ namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static int ComputeProjectileDamage( Projectile projectile ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
+			string projName = ProjectileID.GetUniqueKey( projectile.type );
 
 			if( mymod.Config.ProjectileDamageOverrides.ContainsKey( projName ) ) {
 				ProjectileStateDefinition projDmgOver = mymod.Config.ProjectileDamageOverrides[projName];
@@ -57,7 +56,7 @@ namespace DestructibleTiles {
 			var mymod = DestructibleTilesMod.Instance;
 			float dmg = (float)baseDamage / (float)totalHits;
 			float scale = 1f;
-			string tileName = TileIdentityHelpers.GetUniqueKey( tile.type );
+			string tileName = TileID.GetUniqueKey( tile.type );
 
 			float armor = mymod.Config.TileArmor.ContainsKey(tileName)
 				? (float)mymod.Config.TileArmor[ tileName ].Amount : 0f;

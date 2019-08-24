@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using HamstarHelpers.Helpers.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 
@@ -39,7 +39,7 @@ namespace DestructibleTiles {
 						int radius = ( proj.width + proj.height ) / 4;
 						damage = damage > proj.damage ? damage : proj.damage;
 						
-						string projName = ProjectileIdentityHelpers.GetUniqueKey( i );
+						string projName = ProjectileID.GetUniqueKey( i );
 						projectiles[projName] = Tuple.Create( radius, damage );
 					}
 				} catch {

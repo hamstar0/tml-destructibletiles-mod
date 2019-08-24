@@ -1,5 +1,4 @@
-﻿using HamstarHelpers.Components.DataStructures;
-using HamstarHelpers.Helpers.DotNET.Extensions;
+﻿using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Services.Timers;
 using System;

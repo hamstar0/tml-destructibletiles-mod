@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using HamstarHelpers.Classes.Tiles.TilePattern;
 using HamstarHelpers.Helpers.Tiles;
-using HamstarHelpers.Helpers.Projectiles;
+using HamstarHelpers.Helpers.Projectiles.Attributes;
 using HamstarHelpers.Services.Timers;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using HamstarHelpers.Helpers.Collisions;
+using Terraria.ID;
 
 
 namespace DestructibleTiles {
@@ -19,7 +21,7 @@ namespace DestructibleTiles {
 
 		public static bool CanHitTiles( Projectile projectile, out bool hasCooldown ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
+			string projName = ProjectileID.GetUniqueKey( projectile.type );
 			string timerName = "PTH_" + projectile.whoAmI;
 			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
 			
@@ -93,7 +95,7 @@ namespace DestructibleTiles {
 			if( timeLeft > 3 ) { return; }
 
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
+			string projName = ProjectileID.GetUniqueKey( projectile.type );
 			bool isExplosive = mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName );
 
 			if( isExplosive ) {
@@ -121,7 +123,7 @@ namespace DestructibleTiles {
 
 		public override bool OnTileCollide( Projectile projectile, Vector2 oldVelocity ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileIdentityHelpers.GetUniqueKey( projectile.type );
+			string projName = ProjectileID.GetUniqueKey( projectile.type );
 
 			// Explosives are handled elsewhere
 			if( mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName ) ) {
@@ -140,7 +142,13 @@ namespace DestructibleTiles {
 
 				int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
-				TilePattern tilePattern = new TilePattern( true, respectsPlatforms, false, null, null, null );
+				TilePattern tilePattern = new TilePattern(
+					new TilePatternBuilder {
+						IsSolid = true,
+						IsPlatform = respectsPlatforms
+					}
+				);
+				//true, respectsPlatforms, false, null, null, null );
 				IDictionary<int, int> hits = TileFinderHelpers.GetTilesInWorldRectangle( rect, tilePattern );
 
 				if( hits.Count == 0 ) {
