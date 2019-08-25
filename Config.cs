@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
 
 
 namespace DestructibleTiles {
@@ -75,29 +74,29 @@ namespace DestructibleTiles {
 
 
 		[Label( "Projectile damage to tiles (accepts scaling)" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectileDamageDefaults =
+		public Dictionary<string, ProjectileStateDefinition>	ProjectileDamageDefaults =
 			new Dictionary<string, ProjectileStateDefinition>();
 
 		[Label( "Projectile damage to tiles (overrides all)" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectileDamageOverrides =
+		public Dictionary<string, ProjectileStateDefinition>	ProjectileDamageOverrides =
 			new Dictionary<string, ProjectileStateDefinition>();
 
 		[Label( "Explosive projectives with their radiuses" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectilesAsExplosivesAndRadius =
+		public Dictionary<string, ProjectileStateDefinition>	ProjectilesAsExplosivesAndRadius =
 			new Dictionary<string, ProjectileStateDefinition>();
 
 		[Label( "Consecutive-hitting projectiles with their cooldowns" )]
-		public IDictionary<string, ProjectileStateDefinition>	ProjectilesAsConsecutiveHittingAndCooldown =
+		public Dictionary<string, ProjectileStateDefinition>	ProjectilesAsConsecutiveHittingAndCooldown =
 			new Dictionary<string, ProjectileStateDefinition>();
 		//public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
 
 
 		[Label( "Tile damage multiplier" )]
-		public IDictionary<string, PositiveSingleDefinition>	TileDamageScaleOverrides =
+		public Dictionary<string, PositiveSingleDefinition>	TileDamageScaleOverrides =
 			new Dictionary<string, PositiveSingleDefinition>();
 
 		[Label( "Tile armor" )]
-		public IDictionary<string, PositiveIntDefinition>		TileArmor =
+		public Dictionary<string, PositiveIntDefinition>		TileArmor =
 			new Dictionary<string, PositiveIntDefinition>();
 
 
@@ -116,21 +115,7 @@ namespace DestructibleTiles {
 
 		////////////////
 
-		public override ModConfig Clone() {
-			var clone = (DestructibleTilesConfig)base.Clone();
-
-			clone.ProjectileDamageDefaults = this.ProjectileDamageDefaults?.ToDictionary( kv=>kv.Key, kv=>kv.Value );
-			clone.ProjectileDamageOverrides = this.ProjectileDamageOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
-			clone.ProjectilesAsExplosivesAndRadius = this.ProjectilesAsExplosivesAndRadius?.ToDictionary( kv => kv.Key, kv => kv.Value );
-			clone.ProjectilesAsConsecutiveHittingAndCooldown = this.ProjectilesAsConsecutiveHittingAndCooldown?.ToDictionary( kv => kv.Key, kv => kv.Value );
-			clone.TileDamageScaleOverrides = this.TileDamageScaleOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
-			clone.TileArmor = this.TileArmor?.ToDictionary( kv => kv.Key, kv => kv.Value );
-
-			return clone;
-		}
-
-		[OnDeserialized]
-		internal void OnDeserializedMethod( StreamingContext context ) {
+		public DestructibleTilesConfig() {
 			this.ApplyDefaults = this.ProjectileDamageDefaults == null;
 
 			this.ProjectileDamageDefaults = this.ProjectileDamageDefaults
@@ -180,7 +165,23 @@ namespace DestructibleTiles {
 			}
 		}
 
-		public void SetProjectileDefaults() {
+		public override ModConfig Clone() {
+			var clone = (DestructibleTilesConfig)base.Clone();
+
+			clone.ProjectileDamageDefaults = this.ProjectileDamageDefaults?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.ProjectileDamageOverrides = this.ProjectileDamageOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.ProjectilesAsExplosivesAndRadius = this.ProjectilesAsExplosivesAndRadius?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.ProjectilesAsConsecutiveHittingAndCooldown = this.ProjectilesAsConsecutiveHittingAndCooldown?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.TileDamageScaleOverrides = this.TileDamageScaleOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.TileArmor = this.TileArmor?.ToDictionary( kv => kv.Key, kv => kv.Value );
+
+			return clone;
+		}
+
+
+		////////////////
+
+		public void SetProjectileDefaults() {	//<- Must be called from PostSetupContent
 			if( !this.AutoLoadDefaultExplosiveProjectiles || !this.ApplyDefaults ) {
 				return;
 			}
