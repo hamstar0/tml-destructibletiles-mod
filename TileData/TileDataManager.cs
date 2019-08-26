@@ -1,5 +1,6 @@
 ﻿using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Helpers.Tiles;
+using HamstarHelpers.Services.Hooks.LoadHooks;
 using HamstarHelpers.Services.Timers;
 using System;
 using System.Collections.Concurrent;
@@ -64,13 +65,14 @@ namespace DestructibleTiles.MultiHitTile {
 				Overlays.Scene["TileDamageEffects"] = new TileEffectsOverlay();
 				Overlays.Scene.Activate( "TileDamageEffects" );
 			}
-		}
 
-		////
+			LoadHooks.AddModUnloadHook( () => {
+				Main.OnTick -= TileDataManager._Update;
 
-		~TileDataManager() {
-			Main.OnTick -= TileDataManager._Update;
-			Overlays.Scene["TileDamageEffects"].Deactivate();
+				if( !Main.dedServ ) {
+					Overlays.Scene["TileDamageEffects"].Deactivate();
+				}
+			} );
 		}
 
 
