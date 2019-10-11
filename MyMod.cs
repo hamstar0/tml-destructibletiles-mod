@@ -11,7 +11,7 @@ namespace DestructibleTiles {
 
 		////////////////
 
-		public DestructibleTilesConfig Config => this.GetConfig<DestructibleTilesConfig>();
+		public DestructibleTilesConfig Config => ModContent.GetInstance<DestructibleTilesConfig>();
 
 		public TileDataManager TileDataMngr;
 

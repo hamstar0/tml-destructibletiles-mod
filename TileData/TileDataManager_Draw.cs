@@ -26,7 +26,7 @@ namespace DestructibleTiles.MultiHitTile {
 				return;
 			}*/
 			
-			Tile tile = Main.tile[tileX, tileY];
+			Tile tile = Framing.GetTileSafely( tileX, tileY );
 			TileData data = this.Data[tileX][tileY];
 
 			if( data.AnimationTimeDuration > 0 ) {
@@ -64,7 +64,7 @@ namespace DestructibleTiles.MultiHitTile {
 
 
 		public void DrawTileOverlay( SpriteBatch sb, int tileX, int tileY ) {
-			Tile tile = Main.tile[ tileX, tileY ];
+			Tile tile = Framing.GetTileSafely( tileX, tileY );
 			TileData data = this.Data[tileX][tileY];
 
 			int crackStage = 0;

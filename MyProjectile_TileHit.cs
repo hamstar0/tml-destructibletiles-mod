@@ -10,7 +10,7 @@ namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static bool HitTile( int damage, int tileX, int tileY, int totalHits, float percent = 1f ) {
 			var mymod = DestructibleTilesMod.Instance;
-			Tile tile = Main.tile[tileX, tileY];
+			Tile tile = Framing.GetTileSafely( tileX, tileY );
 			//HitTile plrTileHits = Main.LocalPlayer.hitTile;
 
 			//int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );
@@ -54,7 +54,7 @@ namespace DestructibleTiles {
 
 				for( int j=top; j<bottom; j++ ) {
 					if( j < 0 || j >= Main.maxTilesY - 1 ) { continue; }
-					if( TileHelpers.IsAir(Main.tile[i, j]) ) { continue; }
+					if( TileHelpers.IsAir(Framing.GetTileSafely(i, j)) ) { continue; }
 
 					int xOff = i - tileX;
 					int yOff = j - tileY;

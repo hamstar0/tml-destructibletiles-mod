@@ -10,7 +10,7 @@ namespace DestructibleTiles {
 				return 0f;
 			}
 
-			return DestructibleTilesProjectile.ComputeHitDamage( Main.tile[tileX, tileY], damage, totalHits );
+			return DestructibleTilesProjectile.ComputeHitDamage( Framing.GetTileSafely(tileX, tileY), damage, totalHits );
 		}
 
 		////

@@ -25,7 +25,7 @@ namespace DestructibleTiles.MultiHitTile {
 
 		public static bool IsValidTile( int tileX, int tileY ) {
 			if( !WorldGen.InWorld( tileX, tileY, 0 ) ) { return false; }
-			Tile tile = Main.tile[tileX, tileY];
+			Tile tile = Framing.GetTileSafely( tileX, tileY );
 
 			if( TileHelpers.IsAir(tile) ) { return false; }
 			if( !tile.active() ) { return false; }

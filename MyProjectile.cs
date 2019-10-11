@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HamstarHelpers.Classes.Tiles.TilePattern;
+using HamstarHelpers.Helpers.Debug;
 using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Helpers.Projectiles.Attributes;
 using HamstarHelpers.Services.Timers;
@@ -129,19 +130,19 @@ namespace DestructibleTiles {
 			if( mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName ) ) {
 				return base.OnTileCollide( projectile, oldVelocity );
 			}
-
+			
 			bool _;
 			if( DestructibleTilesProjectile.CanHitTiles(projectile, out _) ) {
 				var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
 				rect.X += (int)oldVelocity.X;
 				rect.Y += (int)oldVelocity.Y;
-
+				
 				bool onlySometimesRespects;
 				bool respectsPlatforms = ProjectileAttributeHelpers.DoesVanillaProjectileHitPlatforms( projectile, out onlySometimesRespects )
 					&& !onlySometimesRespects;
-
+				
 				int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
-
+				
 				TilePattern tilePattern = new TilePattern(
 					new TilePatternBuilder {
 						IsSolid = true,
@@ -150,7 +151,7 @@ namespace DestructibleTiles {
 				);
 				//true, respectsPlatforms, false, null, null, null );
 				IDictionary<int, int> hits = TileFinderHelpers.GetTilesInWorldRectangle( rect, tilePattern );
-
+				
 				if( hits.Count == 0 ) {
 					Point? point = TileFinderHelpers.GetNearestTile( projectile.Center, tilePattern, 32 );
 					if( point.HasValue ) {
