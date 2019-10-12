@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using HamstarHelpers.Classes.UI.ModConfig;
 
 
 namespace DestructibleTiles {
@@ -70,6 +71,7 @@ namespace DestructibleTiles {
 		[Label( "Damage multiplier for all projectiles" )]
 		[Range( 0f, 1000f )]
 		[DefaultValue(1f)]
+		[CustomModConfigItem( typeof( FloatInputElement ) )]
 		public float AllDamagesScale = 1f;
 
 
@@ -103,6 +105,7 @@ namespace DestructibleTiles {
 		[Label( "Beam damage scale" )]
 		[Range( 0f, 1000f )]
 		[DefaultValue( 1f / 30f )]
+		[CustomModConfigItem( typeof( FloatInputElement ) )]
 		public float BeamDamageScale = 1f / 30f;
 
 
