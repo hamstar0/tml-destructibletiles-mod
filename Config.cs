@@ -8,6 +8,12 @@ using HamstarHelpers.Classes.UI.ModConfig;
 
 
 namespace DestructibleTiles {
+	class MyFloatInputElement : FloatInputElement { }
+
+
+
+
+
 	public class ProjectileStateDefinition {
 		[Label("Hurts players or friendly NPCs")]
 		public int IsHostile;
@@ -71,7 +77,7 @@ namespace DestructibleTiles {
 		[Label( "Damage multiplier for all projectiles" )]
 		[Range( 0f, 1000f )]
 		[DefaultValue(1f)]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float AllDamagesScale = 1f;
 
 
@@ -105,7 +111,7 @@ namespace DestructibleTiles {
 		[Label( "Beam damage scale" )]
 		[Range( 0f, 1000f )]
 		[DefaultValue( 1f / 30f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float BeamDamageScale = 1f / 30f;
 
 
@@ -135,7 +141,7 @@ namespace DestructibleTiles {
 				?? new Dictionary<string, PositiveIntDefinition>();
 
 			if( this.ApplyDefaults ) {
-				this.TileDamageScaleOverrides["Terraria MartianConduitPlating"] = new PositiveSingleDefinition( 0.1f );
+				this.TileDamageScaleOverrides["Terraria MartianConduitPlating"] = new PositiveSingleDefinition { Amount = 0.1f };
 
 				this.ProjectileDamageDefaults["Terraria Grenade"] = new ProjectileStateDefinition( 0, 0, 0, 60 );
 				this.ProjectileDamageDefaults["Terraria Explosives"] = new ProjectileStateDefinition( 0, 0, 0, 500 );
@@ -164,7 +170,7 @@ namespace DestructibleTiles {
 				this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire2"] = new ProjectileStateDefinition( 0, 0, 0, 45 );
 				this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire3"] = new ProjectileStateDefinition( 0, 0, 0, 45 );
 
-				this.TileArmor["Terraria LihzahrdBrick"] = new PositiveIntDefinition( 150 );
+				this.TileArmor["Terraria LihzahrdBrick"] = new PositiveIntDefinition { Amount = 150 };
 			}
 		}
 
