@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ModLoader;
+using Terraria.ID;
 using HamstarHelpers.Classes.Tiles.TilePattern;
+using HamstarHelpers.Helpers.Collisions;
 using HamstarHelpers.Helpers.Debug;
 using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Helpers.Projectiles.Attributes;
 using HamstarHelpers.Services.Timers;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ModLoader;
-using HamstarHelpers.Helpers.Collisions;
-using Terraria.ID;
 
 
 namespace DestructibleTiles {
@@ -28,7 +28,7 @@ namespace DestructibleTiles {
 			
 			hasCooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown.ContainsKey( projName );
 
-			Timers.SetTimer( timerName, 2, () => false );
+			Timers.SetTimer( timerName, 2, false, () => false );
 
 			if( isConsecutive ) {
 				if( hasCooldown ) {
@@ -41,7 +41,7 @@ namespace DestructibleTiles {
 								int cooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown[projName].Amount;
 
 								if( Timers.GetTimerTickDuration( repeatTimerName ) <= 0 ) {
-									Timers.SetTimer( repeatTimerName, cooldown, () => false );
+									Timers.SetTimer( repeatTimerName, cooldown, false, () => false );
 									isConsecutive = false;
 								}
 							}
@@ -145,7 +145,7 @@ namespace DestructibleTiles {
 				
 				TilePattern tilePattern = new TilePattern(
 					new TilePatternBuilder {
-						IsSolid = true,
+						HasSolidProperties = true,
 						IsPlatform = respectsPlatforms
 					}
 				);

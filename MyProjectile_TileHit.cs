@@ -1,9 +1,9 @@
 ﻿using System;
-using HamstarHelpers.Helpers.ParticleFx;
-using HamstarHelpers.Helpers.Tiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using HamstarHelpers.Helpers.Fx;
+using HamstarHelpers.Helpers.Tiles;
 
 
 namespace DestructibleTiles {
@@ -17,13 +17,13 @@ namespace DestructibleTiles {
 			int dmg = (int)( DestructibleTilesProjectile.ComputeHitDamage( tile, damage, totalHits ) * percent );
 
 			if( mymod.Config.DebugModeInfo ) {
-				Main.NewText( TileAttributeHelpers.GetVanillaTileDisplayName( tile.type ) + " hit for " + dmg.ToString( "N2" ) );
+				Main.NewText( HamstarHelpers.Helpers.Tiles.Attributes.TileAttributeHelpers.GetVanillaTileDisplayName( tile.type ) + " hit for " + dmg.ToString( "N2" ) );
 			}
 
 			if( mymod.TileDataMngr.AddDamage( tileX, tileY, dmg ) >= 100 ) {//
 			//if( plrTileHits.AddDamage( tileHitId, dmg, true ) >= 100 ) {
 			//	plrTileHits.Clear( tileHitId );
-				TileHelpers.KillTile( tileX, tileY, false, mymod.Config.DestroyedTilesDropItems );
+				TileHelpers.KillTileSynced( tileX, tileY, false, mymod.Config.DestroyedTilesDropItems );
 
 				ParticleFxHelpers.MakeDustCloud(
 					new Vector2((tileX * 16) + 8, (tileY * 16) + 8),
