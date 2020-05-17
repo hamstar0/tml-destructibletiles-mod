@@ -12,8 +12,7 @@ namespace DestructibleTiles {
 
 		////////////////
 
-		public TileEffectsOverlay( EffectPriority priority = EffectPriority.VeryHigh, RenderLayers layer = RenderLayers.TilesAndNPCs )
-			: base( priority, layer ) { }
+		public TileEffectsOverlay() : base( EffectPriority.VeryHigh, RenderLayers.TilesAndNPCs ) { }
 
 
 		////////////////
