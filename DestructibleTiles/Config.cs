@@ -1,9 +1,9 @@
-﻿using HamstarHelpers.Helpers.TModLoader.Configs;
-using Terraria.ModLoader.Config;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Terraria.ModLoader.Config;
+using HamstarHelpers.Helpers.TModLoader.Configs;
 using HamstarHelpers.Classes.UI.ModConfig;
 
 
