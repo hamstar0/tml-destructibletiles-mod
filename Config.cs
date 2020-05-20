@@ -36,6 +36,8 @@ namespace DestructibleTiles {
 
 		////////////////
 
+		public ProjectileStateDefinition() { }
+
 		public ProjectileStateDefinition( int isHostile, int isFriendly, int isPlayer, int amount ) {
 			this.IsHostile = isHostile;
 			this.IsFriendly = isFriendly;
