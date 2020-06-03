@@ -132,40 +132,66 @@ namespace DestructibleTiles {
 			}
 			
 			bool _;
-			if( DestructibleTilesProjectile.CanHitTiles(projectile, out _) ) {
-				var rect = new Rectangle( (int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height );
-				rect.X += (int)oldVelocity.X;
-				rect.Y += (int)oldVelocity.Y;
-				
-				bool onlySometimesRespects;
-				bool respectsPlatforms = ProjectileAttributeHelpers.DoesVanillaProjectileHitPlatforms( projectile, out onlySometimesRespects )
-					&& !onlySometimesRespects;
-				
-				int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
-				
-				TilePattern tilePattern = new TilePattern(
-					new TilePatternBuilder {
-						HasSolidProperties = true,
-						IsPlatform = respectsPlatforms
-					}
-				);
-				//true, respectsPlatforms, false, null, null, null );
-				IDictionary<int, int> hits = TileFinderHelpers.GetTilesInWorldRectangle( rect, tilePattern );
-				
-				if( hits.Count == 0 ) {
-					Point? point = TileFinderHelpers.GetNearestTile( projectile.Center, tilePattern, 32 );
-					if( point.HasValue ) {
-						hits[ point.Value.X ] = point.Value.Y;
-					}
-				}
+			if( !DestructibleTilesProjectile.CanHitTiles(projectile, out _) ) {
+				return base.OnTileCollide( projectile, oldVelocity );
+			}
 
-				if( mymod.Config.DebugModeInfo ) {
-					Main.NewText( "RECTANGLE - " + projectile.Name + " hits #" + hits.Count + " tiles" );
+			var rect = new Rectangle(
+				(int)projectile.position.X,
+				(int)projectile.position.Y,
+				projectile.width,
+				projectile.height );
+			rect.X += (int)oldVelocity.X;
+			rect.Y += (int)oldVelocity.Y;
+				
+			bool onlySometimesRespects;
+			bool respectsPlatforms = ProjectileAttributeHelpers.DoesVanillaProjectileHitPlatforms(
+					projectile,
+					out onlySometimesRespects
+				) && !onlySometimesRespects;
+				
+			int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
+				
+			TilePattern tilePattern = new TilePattern(
+				new TilePatternBuilder {
+					IsActive = true,
+					HasSolidProperties = true,
+					IsPlatform = respectsPlatforms
 				}
+			);
+			//true, respectsPlatforms, false, null, null, null );
+			IList<(ushort, ushort)> hits = TileFinderHelpers.GetTileMatchesInWorldRectangle( rect, tilePattern );
+				
+			if( hits.Count == 0 ) {
+				Point? point = TileFinderHelpers.GetNearestTile( projectile.Center, tilePattern, 32 );
+				if( point.HasValue ) {
+					hits.Add( ((ushort)point.Value.X, (ushort)point.Value.Y) );
+				}
+			}
 
-				foreach( var xy in hits ) {
-					DestructibleTilesProjectile.HitTile( damage, xy.Key, xy.Value, hits.Count );
-				}
+			if( mymod.Config.DebugModeInfo ) {
+				Vector2 projPos = projectile.position;
+				int projWid = projectile.width;
+				int projHei = projectile.height;
+
+				int t = 60;
+				Timers.RunUntil( () => {
+					Vector2 rectPos = projPos + oldVelocity;
+					Dust.QuickBox( rectPos, rectPos + new Vector2(projWid, projHei), 8, Color.Red, d => { } );
+					Dust.QuickDust( projPos, Color.Blue );
+
+					foreach( (ushort x, ushort y) in hits ) {
+						Dust.QuickDust( new Vector2((x*16)+8, (y*16)+8), Color.Green );
+					}
+
+					return t-- > 0;
+				}, true );
+
+				Main.NewText( "RECTANGLE - " + projectile.Name + " hits #" + hits.Count + " tiles" );
+			}
+
+			foreach( (ushort x, ushort y) in hits ) {
+				DestructibleTilesProjectile.HitTile( damage, x, y, hits.Count );
 			}
 
 			return base.OnTileCollide( projectile, oldVelocity );
