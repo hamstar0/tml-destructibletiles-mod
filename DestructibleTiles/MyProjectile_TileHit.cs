@@ -23,15 +23,27 @@ namespace DestructibleTiles {
 			if( mymod.TileDataMngr.AddDamage( tileX, tileY, dmg ) >= 100 ) {//
 			//if( plrTileHits.AddDamage( tileHitId, dmg, true ) >= 100 ) {
 			//	plrTileHits.Clear( tileHitId );
-				TileHelpers.KillTileSynced( tileX, tileY, false, mymod.Config.DestroyedTilesDropItems );
+				bool isTileKilled = TileHelpers.KillTileSynced(
+					tileX: tileX,
+					tileY: tileY,
+					effectOnly: false,
+					dropsItem: mymod.Config.DestroyedTilesDropItems,
+					forceSyncIfUnchanged: true,
+					suppressErrors: false
+				);
 
-				ParticleFxHelpers.MakeDustCloud(
-					new Vector2((tileX * 16) + 8, (tileY * 16) + 8),
-					1,
-					0.3f,
-					1.2f );
+				if( isTileKilled ) {
+					WorldGen.SquareTileFrame( tileX, tileY );   // unnecessary?
 
-				return true;
+					ParticleFxHelpers.MakeDustCloud(
+						new Vector2( (tileX * 16) + 8, (tileY * 16) + 8 ),
+						1,
+						0.3f,
+						1.2f
+					);
+				}
+
+				return isTileKilled;
 			}
 
 			return false;
