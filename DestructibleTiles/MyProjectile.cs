@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
+using Terraria.ModLoader.Config;
 using HamstarHelpers.Classes.Tiles.TilePattern;
 using HamstarHelpers.Helpers.Collisions;
 using HamstarHelpers.Helpers.Debug;
@@ -22,23 +22,23 @@ namespace DestructibleTiles {
 
 		public static bool CanHitTiles( Projectile projectile, out bool hasCooldown ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileID.GetUniqueKey( projectile.type );
+			var projDef = new ProjectileDefinition( projectile.type );
 			string timerName = "PTH_" + projectile.whoAmI;
 			bool isConsecutive = Timers.GetTimerTickDuration( timerName ) > 0;
 			
-			hasCooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown.ContainsKey( projName );
+			hasCooldown = mymod.Config.ProjectilesAsConsecutiveHitters.ContainsKey( projDef );
 
 			Timers.SetTimer( timerName, 2, false, () => false );
 
 			if( isConsecutive ) {
 				if( hasCooldown ) {
-					ProjectileStateDefinition projConsec = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown[projName];
+					ProjectileStateDefinition projConsec = mymod.Config.ProjectilesAsConsecutiveHitters[projDef];
 
 					if( projConsec.IsFriendlyFlag.HasValue && projectile.friendly == projConsec.IsFriendlyFlag.Value ) {
 						if( projConsec.IsHostileFlag.HasValue && projectile.hostile == projConsec.IsHostileFlag.Value ) {
 							if( projConsec.IsNPCFlag.HasValue && projectile.npcProj == projConsec.IsNPCFlag.Value ) {
 								string repeatTimerName = timerName + "_repeat";
-								int cooldown = mymod.Config.ProjectilesAsConsecutiveHittingAndCooldown[projName].Amount;
+								int cooldown = mymod.Config.ProjectilesAsConsecutiveHitters[projDef].Amount;
 
 								if( Timers.GetTimerTickDuration( repeatTimerName ) <= 0 ) {
 									Timers.SetTimer( repeatTimerName, cooldown, false, () => false );
@@ -96,11 +96,11 @@ namespace DestructibleTiles {
 			if( timeLeft > 3 ) { return; }
 
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileID.GetUniqueKey( projectile.type );
-			bool isExplosive = mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName );
+			var projDef = new ProjectileDefinition( projectile.type );
+			bool isExplosive = mymod.Config.ProjectilesAsAoE.ContainsKey( projDef );
 
 			if( isExplosive ) {
-				ProjectileStateDefinition projExploDef = mymod.Config.ProjectilesAsExplosivesAndRadius[projName];
+				ProjectileStateDefinition projExploDef = mymod.Config.ProjectilesAsAoE[projDef];
 
 				if( projExploDef.IsFriendlyFlag.HasValue && projectile.friendly == projExploDef.IsFriendlyFlag.Value ) {
 					if( projExploDef.IsHostileFlag.HasValue && projectile.hostile == projExploDef.IsHostileFlag.Value ) {
@@ -110,7 +110,7 @@ namespace DestructibleTiles {
 							int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
 							if( mymod.Config.DebugModeInfo ) {
-								Main.NewText( "RADIUS - " + projectile.Name + "(" + projName + "), radius:" + projExploDef.Amount + ", damage:" + damage );
+								Main.NewText( "RADIUS - " + projDef.ToString() + ", radius:" + projExploDef.Amount + ", damage:" + damage );
 							}
 
 							DestructibleTilesProjectile.HitTilesInRadius( tileX, tileY, projExploDef.Amount, damage );
@@ -124,10 +124,10 @@ namespace DestructibleTiles {
 
 		public override bool OnTileCollide( Projectile projectile, Vector2 oldVelocity ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileID.GetUniqueKey( projectile.type );
+			var projDef = new ProjectileDefinition( projectile.type );
 
 			// Explosives are handled elsewhere
-			if( mymod.Config.ProjectilesAsExplosivesAndRadius.ContainsKey( projName ) ) {
+			if( mymod.Config.ProjectilesAsAoE.ContainsKey( projDef ) ) {
 				return base.OnTileCollide( projectile, oldVelocity );
 			}
 			

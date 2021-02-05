@@ -1,23 +1,24 @@
-﻿using HamstarHelpers.Helpers.Tiles;
-using System;
+﻿using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
+using HamstarHelpers.Helpers.Tiles;
 
 
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static int ComputeProjectileDamage( Projectile projectile ) {
 			var mymod = DestructibleTilesMod.Instance;
-			string projName = ProjectileID.GetUniqueKey( projectile.type );
+			var projDef = new ProjectileDefinition( projectile.type );
 
-			if( mymod.Config.ProjectileDamageOverrides.ContainsKey( projName ) ) {
-				ProjectileStateDefinition projDmgOver = mymod.Config.ProjectileDamageOverrides[projName];
+			if( mymod.Config.ProjectileTileDamageOverrides.ContainsKey( projDef ) ) {
+				ProjectileStateDefinition projDmgOver = mymod.Config.ProjectileTileDamageOverrides[projDef];
 
 				if( projDmgOver.IsFriendlyFlag.HasValue && projectile.friendly == projDmgOver.IsFriendlyFlag.Value ) {
 					if( projDmgOver.IsHostileFlag.HasValue && projectile.hostile == projDmgOver.IsHostileFlag.Value ) {
 						if( projDmgOver.IsNPCFlag.HasValue && projectile.npcProj == projDmgOver.IsNPCFlag.Value ) {
-							return mymod.Config.ProjectileDamageOverrides[projName].Amount;
+							return mymod.Config.ProjectileTileDamageOverrides[projDef].Amount;
 						}
 					}
 				}
@@ -27,8 +28,8 @@ namespace DestructibleTiles {
 				return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );
 			}
 
-			if( mymod.Config.ProjectileDamageDefaults.ContainsKey( projName ) ) {
-				ProjectileStateDefinition projDmgDef = mymod.Config.ProjectileDamageDefaults[projName];
+			if( mymod.Config.ProjectileTileDamageDefaults.ContainsKey( projDef ) ) {
+				ProjectileStateDefinition projDmgDef = mymod.Config.ProjectileTileDamageDefaults[projDef];
 
 				if( projDmgDef.IsFriendlyFlag.HasValue && projectile.friendly == projDmgDef.IsFriendlyFlag.Value ) {
 					if( projDmgDef.IsHostileFlag.HasValue && projectile.hostile == projDmgDef.IsHostileFlag.Value ) {
@@ -65,8 +66,8 @@ namespace DestructibleTiles {
 				return 0;
 			}
 			
-			if( mymod.Config.TileDamageScaleOverrides.ContainsKey(tileName) ) {
-				scale = mymod.Config.TileDamageScaleOverrides[ tileName ].Amount;
+			if( mymod.Config.SpecificTileDamageScales.ContainsKey(tileName) ) {
+				scale = mymod.Config.SpecificTileDamageScales[ tileName ].Amount;
 			}
 
 			if( mymod.Config.UseVanillaTileDamageScalesUnlessOverridden ) {
