@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Terraria.ID;
 using Terraria.ModLoader.Config;
 using HamstarHelpers.Helpers.TModLoader.Configs;
 using HamstarHelpers.Classes.UI.ModConfig;
@@ -49,72 +50,9 @@ namespace DestructibleTiles {
 
 
 
-	public class DestructibleTilesConfig : ModConfig {
+	public partial class DestructibleTilesConfig : ModConfig {
 		//[JsonIgnore]
 		private bool ApplyDefaults = false;
-
-
-		////
-
-		[Label( "Debug Mode" )]
-		[Tooltip( "Logs or displays developer-relevant information." )]
-		public bool DebugModeInfo = false;
-
-
-		[Label( "Auto-load explosive projectils into config" )]
-		[Tooltip( "Auto-adds all explosive projectiles into the below projectile lists." )]
-		[DefaultValue( true )]
-		public bool AutoLoadDefaultExplosiveProjectiles = true;
-
-
-		[Label( "Destroyed tiles drop block items" )]
-		public bool DestroyedTilesDropItems = false;
-
-
-		[Label( "Use vanilla tile damage scaling (unless overridden)" )]
-		[DefaultValue( true )]
-		public bool UseVanillaTileDamageScalesUnlessOverridden = true;
-
-
-		[Label( "Damage multiplier for all projectiles" )]
-		[Range( 0f, 1000f )]
-		[DefaultValue(1f)]
-		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
-		public float AllDamagesScale = 1f;
-
-
-		[Label( "Projectile damage to tiles (accepts scaling)" )]
-		public Dictionary<string, ProjectileStateDefinition>	ProjectileDamageDefaults =
-			new Dictionary<string, ProjectileStateDefinition>();
-
-		[Label( "Projectile damage to tiles (overrides all)" )]
-		public Dictionary<string, ProjectileStateDefinition>	ProjectileDamageOverrides =
-			new Dictionary<string, ProjectileStateDefinition>();
-
-		[Label( "Explosive projectives with their radiuses" )]
-		public Dictionary<string, ProjectileStateDefinition>	ProjectilesAsExplosivesAndRadius =
-			new Dictionary<string, ProjectileStateDefinition>();
-
-		[Label( "Consecutive-hitting projectiles with their cooldowns" )]
-		public Dictionary<string, ProjectileStateDefinition>	ProjectilesAsConsecutiveHittingAndCooldown =
-			new Dictionary<string, ProjectileStateDefinition>();
-		//public IDictionary<string, float>	ProjectilesAsPhysicsObjectsAndMaxVelocity = new Dictionary<string, float>();
-
-
-		[Label( "Tile damage multiplier" )]
-		public Dictionary<string, PositiveSingleDefinition>	TileDamageScaleOverrides =
-			new Dictionary<string, PositiveSingleDefinition>();
-
-		[Label( "Tile armor" )]
-		public Dictionary<string, PositiveIntDefinition>		TileArmor =
-			new Dictionary<string, PositiveIntDefinition>();
-
-
-		[Label( "Beam damage scale" )]
-		[Range( 0f, 1000f )]
-		[DefaultValue( 1f / 30f )]
-		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
-		public float BeamDamageScale = 1f / 30f;
 
 
 
@@ -143,36 +81,63 @@ namespace DestructibleTiles {
 				?? new Dictionary<string, PositiveIntDefinition>();
 
 			if( this.ApplyDefaults ) {
-				this.TileDamageScaleOverrides["Terraria MartianConduitPlating"] = new PositiveSingleDefinition { Amount = 0.1f };
+				this.TileDamageScaleOverrides[ TileID.GetUniqueKey( TileID.MartianConduitPlating ) ]
+					= new PositiveSingleDefinition { Amount = 0.1f };
 
-				this.ProjectileDamageDefaults["Terraria Grenade"] = new ProjectileStateDefinition( 0, 0, 0, 60 );
-				this.ProjectileDamageDefaults["Terraria Explosives"] = new ProjectileStateDefinition( 0, 0, 0, 500 );
-				this.ProjectileDamageDefaults["Terraria GrenadeI"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria RocketI"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria ProximityMineI"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria GrenadeII"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria RocketII"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria ProximityMineII"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria GrenadeIII"] = new ProjectileStateDefinition( 0, 0, 0, 65 );
-				this.ProjectileDamageDefaults["Terraria RocketIII"] = new ProjectileStateDefinition( 0, 0, 0, 65 );
-				this.ProjectileDamageDefaults["Terraria ProximityMineIII"] = new ProjectileStateDefinition( 0, 0, 0, 65 );
-				this.ProjectileDamageDefaults["Terraria GrenadeIV"] = new ProjectileStateDefinition( 0, 0, 0, 65 );
-				this.ProjectileDamageDefaults["Terraria RocketIV"] = new ProjectileStateDefinition( 0, 0, 0, 65 );
-				this.ProjectileDamageDefaults["Terraria ProximityMineIV"] = new ProjectileStateDefinition( 0, 0, 0, 65 );
-				this.ProjectileDamageDefaults["Terraria Landmine"] = new ProjectileStateDefinition( 0, 0, 0, 250 );
-				this.ProjectileDamageDefaults["Terraria RocketSnowmanI"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria RocketSnowmanII"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria RocketSnowmanIII"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria RocketSnowmanIV"] = new ProjectileStateDefinition( 0, 0, 0, 40 );
-				this.ProjectileDamageDefaults["Terraria StickyGrenade"] = new ProjectileStateDefinition( 0, 0, 0, 60 );
-				this.ProjectileDamageDefaults["Terraria BouncyGrenade"] = new ProjectileStateDefinition( 0, 0, 0, 65 );
-				this.ProjectileDamageDefaults["Terraria PartyGirlGrenade"] = new ProjectileStateDefinition( 0, 0, 0, 30 );
+				this.ProjectileDamageDefaults[ ProjectileID.GetUniqueKey( ProjectileID.Grenade ) ]
+					= new ProjectileStateDefinition( 0, 0, 0, 60 );
+				this.ProjectileDamageDefaults[ ProjectileID.GetUniqueKey( ProjectileID.Explosives ) ]
+					= new ProjectileStateDefinition( 0, 0, 0, 500 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.GrenadeI )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketI )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.ProximityMineI )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.GrenadeII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.ProximityMineII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.GrenadeIII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 65 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketIII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 65 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.ProximityMineIII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 65 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.GrenadeIV )]
+					= new ProjectileStateDefinition( 0, 0, 0, 65 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketIV )]
+					= new ProjectileStateDefinition( 0, 0, 0, 65 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.ProximityMineIV )]
+					= new ProjectileStateDefinition( 0, 0, 0, 65 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.Landmine )]
+					= new ProjectileStateDefinition( 0, 0, 0, 250 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketSnowmanI )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketSnowmanII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketSnowmanIII )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.RocketSnowmanIV )]
+					= new ProjectileStateDefinition( 0, 0, 0, 40 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.StickyGrenade )]
+					= new ProjectileStateDefinition( 0, 0, 0, 60 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.BouncyGrenade )]
+					= new ProjectileStateDefinition( 0, 0, 0, 65 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.PartyGirlGrenade )]
+					= new ProjectileStateDefinition( 0, 0, 0, 30 );
 
-				this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire"] = new ProjectileStateDefinition( 0, 0, 0, 45 );
-				this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire2"] = new ProjectileStateDefinition( 0, 0, 0, 45 );
-				this.ProjectilesAsConsecutiveHittingAndCooldown["Terraria MolotovFire3"] = new ProjectileStateDefinition( 0, 0, 0, 45 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.MolotovFire )]
+					= new ProjectileStateDefinition( 0, 0, 0, 45 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.MolotovFire2 )]
+					= new ProjectileStateDefinition( 0, 0, 0, 45 );
+				this.ProjectileDamageDefaults[ProjectileID.GetUniqueKey( ProjectileID.MolotovFire3 )]
+					= new ProjectileStateDefinition( 0, 0, 0, 45 );
 
-				this.TileArmor["Terraria LihzahrdBrick"] = new PositiveIntDefinition { Amount = 150 };
+				this.TileArmor[TileID.GetUniqueKey( TileID.LihzahrdBrick )]
+					= new PositiveIntDefinition { Amount = 150 };
 			}
 		}
 
