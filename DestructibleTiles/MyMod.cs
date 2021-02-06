@@ -11,8 +11,6 @@ namespace DestructibleTiles {
 
 		////////////////
 
-		public DestructibleTilesConfig Config => ModContent.GetInstance<DestructibleTilesConfig>();
-
 		public TileDataManager TileDataMngr;
 
 
@@ -36,7 +34,7 @@ namespace DestructibleTiles {
 		////
 
 		public override void PostSetupContent() {
-			this.Config.SetProjectileDefaults();
+			DestructibleTilesConfig.Instance.SetProjectileDefaults();
 		}
 
 

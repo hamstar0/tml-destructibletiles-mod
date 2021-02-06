@@ -36,9 +36,7 @@ namespace DestructibleTiles {
 		////////////////
 
 		private void OnConnectSingle() {
-			var mymod = (DestructibleTilesMod)this.mod;
-
-			mymod.Config.SetProjectileDefaults();
+			DestructibleTilesConfig.Instance.SetProjectileDefaults();
 		}
 
 		private void OnConnectClient() {

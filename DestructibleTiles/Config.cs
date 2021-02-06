@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Classes.UI.ModConfig;
+using HamstarHelpers.Helpers.DotNET.Extensions;
 
 
 namespace DestructibleTiles {
@@ -34,7 +36,7 @@ namespace DestructibleTiles {
 
 
 		////////////////
-
+		
 		public ProjectileStateDefinition() { }
 
 		public ProjectileStateDefinition( int isHostile, int isFriendly, int isPlayer, int amount ) {
@@ -43,12 +45,34 @@ namespace DestructibleTiles {
 			this.IsNPC = isPlayer;
 			this.Amount = amount;
 		}
+
+
+		////////////////
+
+		public bool IsProjectileMatch( Projectile proj ) {
+			if( !this.IsFriendlyFlag.HasValue || proj.friendly != this.IsFriendlyFlag.Value ) {
+				return false;
+			}
+			if( !this.IsHostileFlag.HasValue || proj.hostile != this.IsHostileFlag.Value ) {
+				return false;
+			}
+			if( !this.IsNPCFlag.HasValue || proj.npcProj != this.IsNPCFlag.Value ) {
+				return false;
+			}
+			return true;
+		}
 	}
 
 
 
 
 	public partial class DestructibleTilesConfig : ModConfig {
+		public static DestructibleTilesConfig Instance => ModContent.GetInstance<DestructibleTilesConfig>();
+
+
+
+		////////////////
+
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 
 

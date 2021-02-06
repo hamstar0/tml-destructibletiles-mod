@@ -10,13 +10,14 @@ namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static bool HitTile( int damage, int tileX, int tileY, int totalHits, float percent = 1f ) {
 			var mymod = DestructibleTilesMod.Instance;
+			var config = DestructibleTilesConfig.Instance;
 			Tile tile = Framing.GetTileSafely( tileX, tileY );
 			//HitTile plrTileHits = Main.LocalPlayer.hitTile;
 
 			//int tileHitId = plrTileHits.HitObject( tileX, tileY, 1 );
 			int dmg = (int)( DestructibleTilesProjectile.ComputeHitDamage( tile, damage, totalHits ) * percent );
 
-			if( mymod.Config.DebugModeInfo ) {
+			if( config.DebugModeInfo ) {
 				Main.NewText( HamstarHelpers.Helpers.Tiles.Attributes.TileAttributeHelpers.GetVanillaTileDisplayName( tile.type ) + " hit for " + dmg.ToString( "N2" ) );
 			}
 
@@ -27,7 +28,7 @@ namespace DestructibleTiles {
 					tileX: tileX,
 					tileY: tileY,
 					effectOnly: false,
-					dropsItem: mymod.Config.DestroyedTilesDropItems,
+					dropsItem: config.DestroyedTilesDropItems,
 					forceSyncIfUnchanged: true,
 					suppressErrors: false
 				);

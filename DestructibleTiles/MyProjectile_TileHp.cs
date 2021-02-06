@@ -9,68 +9,68 @@ using HamstarHelpers.Helpers.Tiles;
 namespace DestructibleTiles {
 	partial class DestructibleTilesProjectile : GlobalProjectile {
 		public static int ComputeProjectileDamage( Projectile projectile ) {
-			var mymod = DestructibleTilesMod.Instance;
+			var config = DestructibleTilesConfig.Instance;
 			var projDef = new ProjectileDefinition( projectile.type );
 
-			if( mymod.Config.ProjectileTileDamageOverrides.ContainsKey( projDef ) ) {
-				ProjectileStateDefinition projDmgOver = mymod.Config.ProjectileTileDamageOverrides[projDef];
+			if( config.ProjectileTileDamageOverrides.ContainsKey( projDef ) ) {
+				ProjectileStateDefinition projDmgOver = config.ProjectileTileDamageOverrides[projDef];
 
 				if( projDmgOver.IsFriendlyFlag.HasValue && projectile.friendly == projDmgOver.IsFriendlyFlag.Value ) {
 					if( projDmgOver.IsHostileFlag.HasValue && projectile.hostile == projDmgOver.IsHostileFlag.Value ) {
 						if( projDmgOver.IsNPCFlag.HasValue && projectile.npcProj == projDmgOver.IsNPCFlag.Value ) {
-							return mymod.Config.ProjectileTileDamageOverrides[projDef].Amount;
+							return config.ProjectileTileDamageOverrides[projDef].Amount;
 						}
 					}
 				}
 			}
 
 			if( projectile.damage > 0 ) {
-				return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );
+				return (int)( (float)projectile.damage * config.AllDamagesScale );
 			}
 
-			if( mymod.Config.ProjectileTileDamageDefaults.ContainsKey( projDef ) ) {
-				ProjectileStateDefinition projDmgDef = mymod.Config.ProjectileTileDamageDefaults[projDef];
+			if( config.ProjectileTileDamageDefaults.ContainsKey( projDef ) ) {
+				ProjectileStateDefinition projDmgDef = config.ProjectileTileDamageDefaults[projDef];
 
 				if( projDmgDef.IsFriendlyFlag.HasValue && projectile.friendly == projDmgDef.IsFriendlyFlag.Value ) {
 					if( projDmgDef.IsHostileFlag.HasValue && projectile.hostile == projDmgDef.IsHostileFlag.Value ) {
 						if( projDmgDef.IsNPCFlag.HasValue && projectile.npcProj == projDmgDef.IsNPCFlag.Value ) {
-							return (int)((float)projDmgDef.Amount * mymod.Config.AllDamagesScale);
+							return (int)((float)projDmgDef.Amount * config.AllDamagesScale);
 						}
 					}
 				}
 			}
 
-			return (int)( (float)projectile.damage * mymod.Config.AllDamagesScale );
+			return (int)( (float)projectile.damage * config.AllDamagesScale );
 		}
 
 		public static int ComputeBeamProjectileDamage( Projectile projectile ) {
-			var mymod = DestructibleTilesMod.Instance;
+			var config = DestructibleTilesConfig.Instance;
 			int damage = DestructibleTilesProjectile.ComputeProjectileDamage( projectile );
 
-			return (int)((float)damage * mymod.Config.BeamDamageScale);
+			return (int)((float)damage * config.BeamDamageScale);
 		}
 
 
 		////
 
 		public static float ComputeHitDamage( Tile tile, int baseDamage, int totalHits ) {
-			var mymod = DestructibleTilesMod.Instance;
+			var config = DestructibleTilesConfig.Instance;
 			float dmg = (float)baseDamage / (float)totalHits;
 			float scale = 1f;
 			string tileName = TileID.GetUniqueKey( tile.type );
 
-			float armor = mymod.Config.TileArmor.ContainsKey(tileName)
-				? (float)mymod.Config.TileArmor[ tileName ].Amount : 0f;
+			float armor = config.TileArmor.ContainsKey(tileName)
+				? (float)config.TileArmor[ tileName ].Amount : 0f;
 
 			if( armor >= dmg ) {
 				return 0;
 			}
 			
-			if( mymod.Config.SpecificTileDamageScales.ContainsKey(tileName) ) {
-				scale = mymod.Config.SpecificTileDamageScales[ tileName ].Amount;
+			if( config.SpecificTileDamageScales.ContainsKey(tileName) ) {
+				scale = config.SpecificTileDamageScales[ tileName ].Amount;
 			}
 
-			if( mymod.Config.UseVanillaTileDamageScalesUnlessOverridden ) {
+			if( config.UseVanillaTileDamageScalesUnlessOverridden ) {
 				bool isAbsolute;
 				scale *= TileHelpers.GetDamageScale( tile, dmg, out isAbsolute );
 
