@@ -12,15 +12,15 @@ namespace DestructibleTiles {
 			var config = DestructibleTilesConfig.Instance;
 			var projDef = new ProjectileDefinition( projectile.type );
 
+			if( projectile.minion && config.MinionsCannotHitTiles ) {
+				return 0;
+			}
+
 			if( config.ProjectileTileDamageOverrides.ContainsKey( projDef ) ) {
 				ProjectileStateDefinition projDmgOver = config.ProjectileTileDamageOverrides[projDef];
 
-				if( projDmgOver.IsFriendlyFlag.HasValue && projectile.friendly == projDmgOver.IsFriendlyFlag.Value ) {
-					if( projDmgOver.IsHostileFlag.HasValue && projectile.hostile == projDmgOver.IsHostileFlag.Value ) {
-						if( projDmgOver.IsNPCFlag.HasValue && projectile.npcProj == projDmgOver.IsNPCFlag.Value ) {
-							return config.ProjectileTileDamageOverrides[projDef].Amount;
-						}
-					}
+				if( projDmgOver.IsProjectileMatch( projectile ) ) {
+					return config.ProjectileTileDamageOverrides[ projDef ].Amount;
 				}
 			}
 
@@ -31,12 +31,8 @@ namespace DestructibleTiles {
 			if( config.ProjectileTileDamageDefaults.ContainsKey( projDef ) ) {
 				ProjectileStateDefinition projDmgDef = config.ProjectileTileDamageDefaults[projDef];
 
-				if( projDmgDef.IsFriendlyFlag.HasValue && projectile.friendly == projDmgDef.IsFriendlyFlag.Value ) {
-					if( projDmgDef.IsHostileFlag.HasValue && projectile.hostile == projDmgDef.IsHostileFlag.Value ) {
-						if( projDmgDef.IsNPCFlag.HasValue && projectile.npcProj == projDmgDef.IsNPCFlag.Value ) {
-							return (int)((float)projDmgDef.Amount * config.AllDamagesScale);
-						}
-					}
+				if( projDmgDef.IsProjectileMatch( projectile ) ) {
+					return (int)( (float)projDmgDef.Amount * config.AllDamagesScale );
 				}
 			}
 

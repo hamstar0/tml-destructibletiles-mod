@@ -35,7 +35,12 @@ namespace DestructibleTiles {
 		public float AllDamagesScale { get; set; } = 1f;
 
 
-		[Label( "Projectile damage to tiles (accepts scaling)" )]
+		[Label( "Projectile damage to tiles (overrides all)" )]
+		public Dictionary<ProjectileDefinition, ProjectileStateDefinition> ProjectileTileDamageOverrides { get; set; } =
+			new Dictionary<ProjectileDefinition, ProjectileStateDefinition>();
+
+		[Label( "Substitute projectile damage to tiles (accepts scaling)" )]
+		[Tooltip( "Used only when a projectile does not indicate its own damage amount, and is not overridden" )]
 		public Dictionary<ProjectileDefinition, ProjectileStateDefinition> ProjectileTileDamageDefaults { get; set; } =
 			new Dictionary<ProjectileDefinition, ProjectileStateDefinition> {
 				{ new ProjectileDefinition( ProjectileID.Grenade ), new ProjectileStateDefinition( 0, 0, 0, 60 ) },
@@ -66,10 +71,6 @@ namespace DestructibleTiles {
 				{ new ProjectileDefinition( ProjectileID.MolotovFire3 ), new ProjectileStateDefinition( 0, 0, 0, 45 ) }
 			};
 
-		[Label( "Projectile damage to tiles (overrides all)" )]
-		public Dictionary<ProjectileDefinition, ProjectileStateDefinition> ProjectileTileDamageOverrides { get; set; } =
-			new Dictionary<ProjectileDefinition, ProjectileStateDefinition>();
-
 		[Label( "Explosive projectives with their radiuses" )]
 		public Dictionary<ProjectileDefinition, ProjectileStateDefinition> ProjectilesAsAoE { get; set; } =
 			new Dictionary<ProjectileDefinition, ProjectileStateDefinition>();
@@ -98,6 +99,9 @@ namespace DestructibleTiles {
 		[DefaultValue( 1f / 30f )]
 		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float BeamDamageScale { get; set; } = 1f / 30f;
+
+		[DefaultValue( true )]
+		public bool MinionsCannotHitTiles { get; set; } = true;
 
 
 

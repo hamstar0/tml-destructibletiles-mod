@@ -14,7 +14,6 @@ namespace DestructibleTiles {
 
 
 
-
 	public class ProjectileStateDefinition {
 		[Label("Hurts players or friendly NPCs")]
 		public int IsHostile;
@@ -84,8 +83,8 @@ namespace DestructibleTiles {
 		public override ModConfig Clone() {
 			var clone = (DestructibleTilesConfig)base.Clone();
 
-			clone.ProjectileTileDamageDefaults = this.ProjectileTileDamageDefaults?.ToDictionary( kv => kv.Key, kv => kv.Value );
 			clone.ProjectileTileDamageOverrides = this.ProjectileTileDamageOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.ProjectileTileDamageDefaults = this.ProjectileTileDamageDefaults?.ToDictionary( kv => kv.Key, kv => kv.Value );
 			clone.ProjectilesAsAoE = this.ProjectilesAsAoE?.ToDictionary( kv => kv.Key, kv => kv.Value );
 			clone.ProjectilesAsConsecutiveHitters = this.ProjectilesAsConsecutiveHitters?.ToDictionary( kv => kv.Key, kv => kv.Value );
 			clone.SpecificTileDamageScales = this.SpecificTileDamageScales?.ToDictionary( kv => kv.Key, kv => kv.Value );
