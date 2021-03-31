@@ -16,11 +16,11 @@ namespace DestructibleTiles {
 				return 0;
 			}
 
-			if( config.ProjectileTileDamageOverrides.ContainsKey( projDef ) ) {
-				ProjectileStateDefinition projDmgOver = config.ProjectileTileDamageOverrides[projDef];
+			if( config.ProjectileTileDamageUltimate.ContainsKey( projDef ) ) {
+				ProjectileStateDefinition projDmgOver = config.ProjectileTileDamageUltimate[projDef];
 
 				if( projDmgOver.IsProjectileMatch( projectile ) ) {
-					return config.ProjectileTileDamageOverrides[ projDef ].Amount;
+					return projDmgOver.Amount;
 				}
 			}
 

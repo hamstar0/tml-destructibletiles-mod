@@ -15,12 +15,21 @@ namespace DestructibleTiles {
 
 
 	public class ProjectileStateDefinition {
-		[Label("Hurts players or friendly NPCs")]
+		[Label("Hurts players or friendly NPCs (0 = ignore)")]
+		[Range( -1, 1 )]
+		[DrawTicks]
 		public int IsHostile;
-		[Label("Hurts enemies")]
+
+		[Label("Hurts enemies (0 = ignore)")]
+		[Range( -1, 1 )]
+		[DrawTicks]
 		public int IsFriendly;
-		[Label("NPC-made projectile")]
+
+		[Label("NPC-made projectile (0 = ignore)")]
+		[Range( -1, 1 )]
+		[DrawTicks]
 		public int IsNPC;
+
 		[Label("Damage amount")]
 		public int Amount;
 
@@ -83,7 +92,7 @@ namespace DestructibleTiles {
 		public override ModConfig Clone() {
 			var clone = (DestructibleTilesConfig)base.Clone();
 
-			clone.ProjectileTileDamageOverrides = this.ProjectileTileDamageOverrides?.ToDictionary( kv => kv.Key, kv => kv.Value );
+			clone.ProjectileTileDamageUltimate = this.ProjectileTileDamageUltimate?.ToDictionary( kv => kv.Key, kv => kv.Value );
 			clone.ProjectileTileDamageDefaults = this.ProjectileTileDamageDefaults?.ToDictionary( kv => kv.Key, kv => kv.Value );
 			clone.ProjectilesAsAoE = this.ProjectilesAsAoE?.ToDictionary( kv => kv.Key, kv => kv.Value );
 			clone.ProjectilesAsConsecutiveHitters = this.ProjectilesAsConsecutiveHitters?.ToDictionary( kv => kv.Key, kv => kv.Value );
