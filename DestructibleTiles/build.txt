@@ -1,6 +1,6 @@
 author = hamstar
 version = 1.2.5
 displayName = Destructible Tiles
-modReferences = HamstarHelpers@5.11.0
+modReferences = HamstarHelpers@5.12.0
 buildIgnore = *.csproj, *.user, *.bat, obj\*, bin\*, .vs\*, .git\*
 homepage = https://forums.terraria.org/index.php?threads/destructible-tiles.79929/
